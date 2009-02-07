@@ -7,7 +7,7 @@ begin
     s.summary = %Q{A gem for accessing the NYTimes Article Search API}
     s.email = "jharris@nytimes.com"
     s.homepage = "http://github.com/harrisj/nytimes-articles"
-    s.description = "TODO"
+    s.description = "A gem for accessing the New York Times Article Search API"
     s.authors = ["Jacob Harris"]
   end
 rescue LoadError

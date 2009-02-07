@@ -1,5 +1,6 @@
 nytimes-articles================
-Description goes here.
+
+A simple GEM for interacting with the New York Times' Article Search API (http://developer.nytimes.com/docs/article_search_api)
 
 COPYRIGHT
 =========
