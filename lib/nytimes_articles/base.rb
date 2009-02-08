@@ -32,21 +32,21 @@ module Nytimes
 
 			##
 			# Builds a request URI to call the API server
-			def self.build_request_url(path, params)
+			def self.build_request_url(params)
 				URI::HTTP.build :host => API_SERVER,
-				:path => "#{API_BASE}/#{path}",
+				:path => API_BASE,
 				:query => params.map {|k,v| "#{k}=#{v}"}.join('&')
 			end
 
-			def self.invoke(path, params={})
+			def self.invoke(params={})
 				begin
 					if @@api_key.nil?
-						raise "You must initialize the API key before you run any API queries"
+						raise AuthenticationError, "You must initialize the API key before you run any API queries"
 					end
 
 					full_params = params.merge 'api-key' => @@api_key
 
-					uri = build_request_url(path, full_params)
+					uri = build_request_url(full_params)
 
 					# puts "Request  [#{uri}]"
 
@@ -66,13 +66,20 @@ module Nytimes
 
 					parsed_reply
 				rescue OpenURI::HTTPError => e
-					if e.message =~ /^404/
+					case e.message
+					when /^400/
+						raise BadRequestError
+					when /^403/
+						raise AuthenticationError
+					when /^404/
 						return nil
+					when /^500/
+						raise ServerError
 					end
 
 					raise "Error connecting to URL #{uri} #{e}"
-					#rescue JSON::ParserError => e
-					# raise RuntimeError, "Invalid JSON returned from CRNR:\n#{reply}"
+				rescue JSON::ParserError => e
+					raise BadResponseError, "Invalid JSON returned from API:\n#{reply}"
 				end
 			end
 		end
