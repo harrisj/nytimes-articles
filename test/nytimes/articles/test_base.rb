@@ -3,6 +3,13 @@ require File.dirname(__FILE__) + '/../../test_helper.rb'
 class TestNytimes::TestArticles::TestBase < Test::Unit::TestCase
 	include Nytimes::Articles
 	context "Base.build_request_url" do
+		should "call v1 of the API" do
+			assert_match %r{v1}, api_url_for 
+		end
+		
+		should "be of the form /svc/search/VERSION/articles" do
+			assert_match %r{/svc/search/[^/]+/articles}, api_url_for
+		end
 	end
 	
 	context "Base.invoke" do
@@ -53,6 +60,18 @@ class TestNytimes::TestArticles::TestBase < Test::Unit::TestCase
 			
 			should "raise an ServerError" do
 				assert_raise(ServerError) do
+					Base.invoke
+				end
+			end
+		end
+		
+		context "when the Articles API returns any other HTTP error" do
+			setup do
+				FakeWeb.register_uri(api_url_for, :status => ["502", "Random Error"])
+			end
+			
+			should "raise an ConnectionError" do
+				assert_raise(ConnectionError) do
 					Base.invoke
 				end
 			end

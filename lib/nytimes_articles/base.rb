@@ -66,6 +66,7 @@ module Nytimes
 
 					parsed_reply
 				rescue OpenURI::HTTPError => e
+					# FIXME: Return message from body?
 					case e.message
 					when /^400/
 						raise BadRequestError
@@ -75,6 +76,8 @@ module Nytimes
 						return nil
 					when /^500/
 						raise ServerError
+					else
+						raise ConnectionError
 					end
 
 					raise "Error connecting to URL #{uri} #{e}"
