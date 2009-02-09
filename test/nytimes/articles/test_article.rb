@@ -24,8 +24,12 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 	end
 	
 	context "Article.search" do
-		should "pass in all parameters to the query argument of the API"
-		should "accept arguments either as a hash or as an array"
+		should "accept a String for the first argument that is passed through to the query in the API" do
+			Article.expects(:invoke).with(has_entry("query", "FOO BAR"))
+			Article.search "FOO BAR"
+		end
+		
+		should "accept a Hash for the first argument"
 		
 		context "date ranges" do
 			should "pass a string argument to begin_date straight through" do
@@ -92,6 +96,21 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 			
 			should "use the :offset argument if both an :offset and :page are provided" do
+				Article.expects(:invoke).with(has_entry("offset", 2))
+				Article.search :offset => 2, :page => 203
+			end
+		end
+		
+		context "rank" do
+			%w(newest oldest closest).each do |rank|
+				should "accept #{rank} as the argument to rank" do
+					Article.expects(:invoke).with(has_entry("rank", rank))
+					Article.search :rank => rank.to_sym
+				end
+			end
+			
+			should "raise an ArgumentError if rank is something else" do
+				assert_raise(ArgumentError) { Article.search :rank => :clockwise }
 			end
 		end
 		

@@ -21,6 +21,18 @@ module Nytimes
 				
 				api_params = {}
 				
+				if params[:query]
+					api_params['query'] = params[:query]
+				end
+				
+				if params[:rank]
+					unless [:newest, :oldest, :closest].include?(params[:rank])
+						raise ArgumentError, "Rank should only be :newest | :oldest | :closest"
+					end
+					
+					api_params['rank'] = params[:rank].to_s
+				end
+				
 				if params[:begin_date]
 					api_params['begin_date'] = date_argument(:begin_date, params[:begin_date])
 				end
