@@ -1,12 +1,72 @@
 module Nytimes
 	module Articles
 		class Article < Base
-			attr_reader :abstract, :author, :byline, :body
+			QUERY_FIELDS = %w(abstract author body byline fee lead_paragraph multimedia nytd_lead_paragraph nytd_title related_multimedia small_image small_image_url small_image_height small_image_width title url word_count)
+			
+			ALL_FIELDS = QUERY_FIELDS + Facet::ALL_FACETS
+			
+			attr_reader *QUERY_FIELDS
+			attr_reader *(Facet::ALL_FACETS.map {|f| f.gsub('_facet', '')})
+			
+			def initialize(params={})
+				params.each_pair do |k,v|
+					instance_variable_set("@#{k}", v)
+				end
+			end
 			
 			def self.date_argument(field_name, arg)
 				return arg if arg.is_a? String
 				return arg.strftime("%Y%m%d") if arg.respond_to? :strftime
 				raise ArgumentError, "Only a string or Date/Time object is allowed as a parameter to the #{field_name} input"
+			end
+			
+			def self.facet_params(params, facet_name)
+				return nil if params[facet_name].nil?
+				
+				params[facet_name].map {|f| Facet.new(facet_name, f, nil) }
+			end
+			
+			def self.integer_field(value)
+				return nil if value.nil?
+				value.to_i
+			end
+			
+			def self.date_field(value)
+				return nil unless value =~ /^\d{8}$/
+				Date.strptime(value, "%Y%m%d")
+			end
+			
+			def self.init_from_api(params)
+				Article.new(
+					:abstract => params['abstract'],
+					:author => params['author'],
+					:body => params['body'],
+					:byline => params['byline'],
+					:fee => params['fee'] || false,
+					:lead_paragraph => params['lead_paragraph'],
+					:nytd_title => params['nytd_title'],
+					:related_multimedia => nil, # FIXME
+					:image => nil, # FIXME
+					:title => params['title'],
+					:url => params['url'],
+					:word_count => params['word_count'],
+					
+					# FACETS THAT RETURN SCALARS
+					:page => params[Facet::PAGE],
+					:column => params[Facet::COLUMN],
+					:pub_month => integer_field(params[Facet::PUB_MONTH]),
+					:pub_year => integer_field(params[Facet::PUB_YEAR]),
+					:pub_day => integer_field(params[Facet::PUB_DAY]),
+					:day_of_week => params[Facet::DAY_OF_WEEK],
+					:desk => params[Facet::DESK],
+					:date => date_field(params[Facet::DATE]),
+					:section_page => params[Facet::SECTION_PAGE],
+					:source => params[Facet::SOURCE],
+					
+					# FACETS THAT RETURN ARRAYS
+					:classifiers => facet_params(params, Facet::CLASSIFIERS),
+					:geographic => facet_params(params, Facet::GEOGRAPHIC)
+				)
 			end
 			
 			def self.search(query, params={})

@@ -1,106 +1,113 @@
 require File.dirname(__FILE__) + '/../../test_helper.rb'
 
+ARTICLE_API_HASH = {"page_facet"=>"8", "lead_paragraph"=>"", "classifiers_facet"=>["Top/News/Business", "Top/Classifieds/Job Market/Job Categories/Banking, Finance and Insurance", "Top/News/Business/Markets"], "title"=>"Wall St. Treads Water as It Waits on Washington", "nytd_title"=>"Wall St. Treads Water as It Waits on Washington", "byline"=>"By JACK HEALY", "body"=>"Wall Street held its breath on Monday as it awaited details on a banking bailout from Washington. Investors had expected to start the week with an announcement from the Treasury Department outlining its latest plans to stabilize the financial system. But the Obama administration delayed releasing the details until at least Tuesday to keep the focus", "material_type_facet"=>["News"], "url"=>"http://www.nytimes.com/2009/02/10/business/10markets.html", "publication_month"=>"02", "date"=>"20090210", "publication_year"=>"2009", "nytd_section_facet"=>["Business"], "source_facet"=>"The New York Times", "desk_facet"=>"Business", "publication_day"=>"10", "des_facet"=>["STOCKS AND BONDS"], "day_of_week_facet"=>"Tuesday"}
+
+ARTICLE_API_HASH2 = {"page_facet"=>"29", "lead_paragraph"=>"", "geo_facet"=>["WALL STREET (NYC)"], "small_image_width"=>"75", "classifiers_facet"=>["Top/News/New York and Region", "Top/Classifieds/Job Market/Job Categories/Education", "Top/Features/Travel/Guides/Destinations/North America", "Top/Classifieds/Job Market/Job Categories/Banking, Finance and Insurance", "Top/Features/Travel/Guides/Destinations/North America/United States/New York", "Top/Features/Travel/Guides/Destinations/North America/United States", "Top/News/Education"], "title"=>"OUR TOWNS; As Pipeline to Wall Street Narrows, Princeton Students Adjust Sights", "nytd_title"=>"As Pipeline to Wall Street Narrows, Princeton Students Adjust Sights", "byline"=>"By PETER APPLEBOME", "body"=>"Princeton, N.J. There must be a screenplay in the fabulous Schoppe twins, Christine and Jennifer, Princeton University juniors from Houston. They had the same G.P.A. and SATs in high school, where they became Gold Award Girl Scouts , sort of the female version of Eagle Scouts. They live together and take all the same courses, wear identical necklac", "material_type_facet"=>["News"], "url"=>"http://www.nytimes.com/2009/02/08/nyregion/08towns.html", "publication_month"=>"02", "small_image_height"=>"75", "date"=>"20090208", "column_facet"=>"Our Towns", "small_image"=>"Y", "publication_year"=>"2009", "nytd_section_facet"=>["New York and Region", "Education"], "source_facet"=>"The New York Times", "org_facet"=>["PRINCETON UNIVERSITY"], "desk_facet"=>"New York Region", "publication_day"=>"08", "small_image_url"=>"http://graphics8.nytimes.com/images/2009/02/08/nyregion/08towns.751.jpg", "des_facet"=>["EDUCATION AND SCHOOLS", "BANKS AND BANKING"], "day_of_week_facet"=>"Sunday"}
+
 class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 	include Nytimes::Articles
-	
+
 	def setup
 		init_test_key
 	end
-	
+
 	context "attributes" do
 		setup do
 			@article = Article.new
 		end
-		
+
 		%w(abstract author body byline).each do |text_field|
 			should_eventually "return a string for the #{text_field} attribute" do
 				assert_kind_of String, @article.send(text_field)
 			end
-			
+
 			should "only allow read-only access for the attribute" do
 				assert !@article.respond_to?("#{text_field}=")
 			end
 		end
 	end
-	
+
 	context "Article.search" do
 		should "accept a String for the first argument that is passed through to the query in the API" do
 			Article.expects(:invoke).with(has_entry("query", "FOO BAR"))
 			Article.search "FOO BAR"
 		end
-		
+
 		should "accept a Hash for the first argument"
-		
+
 		context "date ranges" do
 			should "pass a string argument to begin_date straight through" do
 				date = "20081212"
 				Article.expects(:invoke).with(has_entry("begin_date", date))
 				Article.search :begin_date => date
 			end
-			
+
 			should "convert begin_date from a Date or Time to YYYYMMDD format" do
 				time = Time.now
 				Article.expects(:invoke).with(has_entry("begin_date", time.strftime("%Y%m%d")))
 				Article.search :begin_date => time
 			end
-			
+
 			should "pass a string argument to end_date straight through" do
 				date = "20081212"
 				Article.expects(:invoke).with(has_entry("end_date", date))
 				Article.search :end_date => date
 			end
-			
+
 			should "convert end_date from a Date or Time to YYYYMMDD format" do
 				time = Time.now
 				Article.expects(:invoke).with(has_entry("end_date", time.strftime("%Y%m%d")))
 				Article.search :end_date => time
 			end
-			
+
 			should "raise an ArgumentError if the begin_date is NOT a string and does not respond_to strftime" do
 				assert_raise(ArgumentError) { Article.search :begin_date => 23 }
 			end
-			
+
 			should "raise an ArgumentError if the end_date is NOT a string and does not respond_to strftime" do
 				assert_raise(ArgumentError) { Article.search :end_date => 23 }
 			end
-			
+
 			# should "accept a date_range argument with a begin and end date argument"
 		end
-		
-		context "facets" do
-			
+
+		context "return_facets" do
+			should "accept a single string"
+
+			should "accept an array of strings"
+			should "also accept Facet instances and use their type in the search"
 		end
-		
+
 		context "offset" do
 			should "pass through an explicit offset parameter if specified" do
 				Article.expects(:invoke).with(has_entry("offset", 10))
 				Article.search :offset => 10
 			end
-			
+
 			should "raise an ArgumentError if the offset is not an Integer" do
 				assert_raise(ArgumentError) { Article.search :offset => 'apple' }
 			end
-			
+
 			should "pass through an offset of page - 1 if :page is used instead" do
 				Article.expects(:invoke).with(has_entry("offset", 2))
 				Article.search :page => 3
 			end
-			
+
 			should "not pass through a page parameter to the API" do
 				Article.expects(:invoke).with(Not(has_key("page")))
 				Article.search :page => 3
 			end
-			
+
 			should "raise an ArgumentError if the page is not an Integer" do
 				assert_raise(ArgumentError) { Article.search :page => 'orange' }
 			end
-			
+
 			should "use the :offset argument if both an :offset and :page are provided" do
 				Article.expects(:invoke).with(has_entry("offset", 2))
 				Article.search :offset => 2, :page => 203
 			end
 		end
-		
+
 		context "rank" do
 			%w(newest oldest closest).each do |rank|
 				should "accept #{rank} as the argument to rank" do
@@ -108,33 +115,33 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 					Article.search :rank => rank.to_sym
 				end
 			end
-			
+
 			should "raise an ArgumentError if rank is something else" do
 				assert_raise(ArgumentError) { Article.search :rank => :clockwise }
 			end
 		end
-		
+
 		context "query parameters" do
 			context "abstract" do
 				should "be prefixed with the abstract: field identifier in the query"
 				should "cast the argument to a string (will figure out processing later)"
 			end
-			
+
 			context "author" do
 				should "be prefixed with the author: field identifier in the query"
 				should "cast the argument to a string (will figure out processing later)"
 			end
-			
+
 			context "body" do
 				should "be prefixed with the body: field identifier in the query"
 				should "cast the argument to a string (will figure out processing later)"
 			end
-			
+
 			context "byline" do
 				should "be prefixed with the body: field identifier in the query"
 				should "cast the argument to a string (will figure out processing later)"
 			end
-			
+
 			context "classifiers" do
 				should "be prefixed with classifiers_facet"
 				should "send arguments as an array"
@@ -142,9 +149,17 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 	end
-	
-	context "Article.init_from_hash" do
-		
+
+	context "Article.init_from_api" do
+		setup do
+			@article = Article.init_from_api(ARTICLE_API_HASH2)
+		end
+
+		context "page" do
+			should "read the value from the page_facet field" do
+				assert_equal ARTICLE_API_HASH2['page_facet'], @article.page
+			end
+		end
 	end
 end
 
