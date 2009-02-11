@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'htmlentities'
 
 module Nytimes
 	module Articles
@@ -39,12 +38,6 @@ module Nytimes
 				params[facet_name].map {|f| Facet.new(facet_name, f, nil) }
 			end
 			
-			def self.text_field(value)
-				return nil if value.nil?
-				coder = HTMLEntities.new
-				coder.decode(value)
-			end
-			
 			def self.text_argument(field, argument)
 				arg = argument.dup
 				subquery = []
@@ -57,16 +50,6 @@ module Nytimes
 				end
 				
 				subquery.join(' ')
-			end
-			
-			def self.integer_field(value)
-				return nil if value.nil?
-				value.to_i
-			end
-			
-			def self.date_field(value)
-				return nil unless value =~ /^\d{8}$/
-				Date.strptime(value, "%Y%m%d")
 			end
 			
 			def self.init_from_api(params)
@@ -103,6 +86,10 @@ module Nytimes
 				)
 				
 				article
+			end
+			
+			def self.parse_reply(reply)
+				ResultSet.init_from_api(reply)
 			end
 			
 			def self.search(query, params={})
@@ -164,7 +151,8 @@ module Nytimes
 					api_params['offset'] = params[:offset]
 				end
 				
-				invoke(api_params)
+				reply = invoke(api_params)
+				parse_reply(reply)
 			end
 		end
 	end

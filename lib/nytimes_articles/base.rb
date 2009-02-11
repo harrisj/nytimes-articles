@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'json'
+require 'htmlentities'
 
 module Nytimes
 	module Articles
@@ -37,6 +38,22 @@ module Nytimes
 				:path => API_BASE,
 				:query => params.map {|k,v| "#{k}=#{v}"}.join('&')
 			end
+			
+			def self.text_field(value)
+				return nil if value.nil?
+				coder = HTMLEntities.new
+				coder.decode(value)
+			end
+			
+			def self.integer_field(value)
+				return nil if value.nil?
+				value.to_i
+			end
+			
+			def self.date_field(value)
+				return nil unless value =~ /^\d{8}$/
+				Date.strptime(value, "%Y%m%d")
+			end
 
 			def self.invoke(params={})
 				begin
@@ -45,17 +62,12 @@ module Nytimes
 					end
 
 					full_params = params.merge 'api-key' => @@api_key
-
 					uri = build_request_url(full_params)
-
-					# puts "Request  [#{uri}]"
-
 					reply = uri.read
 					parsed_reply = JSON.parse reply
 
 					if parsed_reply.nil?
-						# FIXME
-						raise "Empty reply returned from API"
+						raise BadResponseError, "Empty reply returned from API"
 					end
 
 					#case parsed_reply['status']

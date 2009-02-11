@@ -9,6 +9,7 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 
 	def setup
 		init_test_key
+		Article.stubs(:parse_reply)
 	end
 
 	context "Article.search" do
