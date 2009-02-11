@@ -11,22 +11,6 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 		init_test_key
 	end
 
-	context "attributes" do
-		setup do
-			@article = Article.new
-		end
-
-		%w(abstract author body byline).each do |text_field|
-			should_eventually "return a string for the #{text_field} attribute" do
-				assert_kind_of String, @article.send(text_field)
-			end
-
-			should "only allow read-only access for the attribute" do
-				assert !@article.respond_to?("#{text_field}=")
-			end
-		end
-	end
-
 	context "Article.search" do
 		should "accept a String for the first argument that is passed through to the query in the API" do
 			Article.expects(:invoke).with(has_entry("query", "FOO BAR"))
@@ -181,7 +165,67 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 
-		context "page" do
+		Article::NUMERIC_FIELDS.each do |tf|
+			context "@#{tf}" do
+				should "read and coerce the string value from the hash input" do
+					article = Article.init_from_api(tf => "23")
+					assert_equal 23, article.send(tf)
+				end
+
+				should "only provide read-only access to the field" do
+					article = Article.init_from_api(tf => "23")
+					assert !article.respond_to?("#{tf}=")
+				end
+
+				should "return nil if the value is not provided in the hash" do
+					article = Article.init_from_api({"foo" => "bar"})
+					assert_nil article.send(tf)
+				end	
+			end				
+		end
+		
+		# all the rest
+		context "@fee" do
+			setup do
+				@article = Article.init_from_api(ARTICLE_API_HASH)
+			end
+			
+			should "be true if returned as true from the API" do
+				article = Article.init_from_api('fee' => true)
+				assert_equal true, article.fee?
+				assert_equal false, article.free?
+			end
+			
+			should "default to false if not specified in the hash" do
+				assert_equal false, @article.fee?
+				assert_equal true, @article.free?
+			end
+		end
+		
+		context "@url" do
+			setup do
+				@article = Article.init_from_api(ARTICLE_API_HASH)
+			end
+			
+			should "read the value from the hash" do
+				assert_equal ARTICLE_API_HASH['url'], @article.url
+			end
+			
+			should "return a String" do
+				assert_kind_of(String, @article.url)
+			end
+
+			should "only provide read-only access to the field" do
+				assert !@article.respond_to?("url=")
+			end
+
+			should "return nil if the value is not provided in the hash" do
+				article = Article.init_from_api({"foo" => "bar"})
+				assert_nil article.url
+			end	
+		end
+		
+		context "@page" do
 			should "read the value from the page_facet field" do
 				assert_equal ARTICLE_API_HASH2['page_facet'].to_i, @article.page
 			end

@@ -22,6 +22,11 @@ module Nytimes
 				end
 			end
 			
+			alias :fee? :fee
+			def free?
+				not(fee?)
+			end
+			
 			def self.date_argument(field_name, arg)
 				return arg if arg.is_a? String
 				return arg.strftime("%Y%m%d") if arg.respond_to? :strftime
