@@ -155,9 +155,45 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			@article = Article.init_from_api(ARTICLE_API_HASH2)
 		end
 
+		Article::TEXT_FIELDS.each do |tf|
+			context "@#{tf}" do
+				should "read the value from the hash input" do
+					hash = {}
+					hash[tf] = "TEST TEXT"
+					article = Article.init_from_api(hash)
+					assert_equal "TEST TEXT", article.send(tf)
+				end
+
+				should "properly translate HTML entities back into characters" do
+					article = Article.init_from_api(tf => '&#8220;Money for Nothing&#8221;')
+					assert_equal "“Money for Nothing”", article.send(tf), article.inspect
+				end
+
+				should "only provide read-only access to the field" do
+					article = Article.init_from_api(tf => "TEST TEXT")
+					assert !article.respond_to?("#{tf}=")
+				end
+
+				should "return nil if the value is not provided in the hash" do
+					article = Article.init_from_api({"foo" => "bar"})
+					assert_nil article.send(tf)
+				end
+			end
+		end
+
 		context "page" do
 			should "read the value from the page_facet field" do
-				assert_equal ARTICLE_API_HASH2['page_facet'], @article.page
+				assert_equal ARTICLE_API_HASH2['page_facet'].to_i, @article.page
+			end
+
+			should "only provide read-only access to the field" do
+				article = Article.new
+				assert !article.respond_to?("page=")
+			end
+
+			should "return nil if the value is not provided in the hash" do
+				article = Article.init_from_api({"foo" => "bar"})
+				assert_nil article.page
 			end
 		end
 	end

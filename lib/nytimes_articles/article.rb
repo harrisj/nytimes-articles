@@ -1,11 +1,19 @@
+require 'rubygems'
+require 'htmlentities'
+
 module Nytimes
 	module Articles
 		class Article < Base
-			QUERY_FIELDS = %w(abstract author body byline fee lead_paragraph multimedia nytd_lead_paragraph nytd_title related_multimedia small_image small_image_url small_image_height small_image_width title url word_count)
+			RAW_FIELDS = %w(url)
+			TEXT_FIELDS = %w(abstract author body byline lead_paragraph nytd_lead_paragraph nytd_title title)
+			NUMERIC_FIELDS = %w(word_count)
+			BOOLEAN_FIELDS = %w(fee small_image)
+			IMAGE_FIELDS = %w(small_image small_image_url small_image_height small_image_width)
+			MULTIMEDIA_FIELDS = %w(multimedia related_multimedia)
 			
-			ALL_FIELDS = QUERY_FIELDS + Facet::ALL_FACETS
+			ALL_FIELDS = TEXT_FIELDS + RAW_FIELDS + NUMERIC_FIELDS + BOOLEAN_FIELDS + IMAGE_FIELDS + MULTIMEDIA_FIELDS + Facet::ALL_FACETS
 			
-			attr_reader *QUERY_FIELDS
+			attr_reader *ALL_FIELDS
 			attr_reader *(Facet::ALL_FACETS.map {|f| f.gsub('_facet', '')})
 			
 			def initialize(params={})
@@ -26,6 +34,12 @@ module Nytimes
 				params[facet_name].map {|f| Facet.new(facet_name, f, nil) }
 			end
 			
+			def self.text_field(value)
+				return nil if value.nil?
+				coder = HTMLEntities.new
+				coder.decode(value)
+			end
+			
 			def self.integer_field(value)
 				return nil if value.nil?
 				value.to_i
@@ -37,36 +51,39 @@ module Nytimes
 			end
 			
 			def self.init_from_api(params)
-				Article.new(
-					:abstract => params['abstract'],
-					:author => params['author'],
-					:body => params['body'],
-					:byline => params['byline'],
+				article = Article.new(
+					:abstract => text_field(params['abstract']),
+					:author => text_field(params['author']),
+					:body => text_field(params['body']),
+					:byline => text_field(params['byline']),
 					:fee => params['fee'] || false,
-					:lead_paragraph => params['lead_paragraph'],
-					:nytd_title => params['nytd_title'],
+					:lead_paragraph => text_field(params['lead_paragraph']),
+					:nytd_title => text_field(params['nytd_title']),
+					:nytd_lead_paragraph => text_field(params['nytd_lead_paragraph']),
 					:related_multimedia => nil, # FIXME
 					:image => nil, # FIXME
-					:title => params['title'],
+					:title => text_field(params['title']),
 					:url => params['url'],
-					:word_count => params['word_count'],
+					:word_count => integer_field(params['word_count']),
 					
 					# FACETS THAT RETURN SCALARS
-					:page => params[Facet::PAGE],
-					:column => params[Facet::COLUMN],
+					:page => integer_field(params[Facet::PAGE]),
+					:column => text_field(params[Facet::COLUMN]),
 					:pub_month => integer_field(params[Facet::PUB_MONTH]),
 					:pub_year => integer_field(params[Facet::PUB_YEAR]),
 					:pub_day => integer_field(params[Facet::PUB_DAY]),
 					:day_of_week => params[Facet::DAY_OF_WEEK],
-					:desk => params[Facet::DESK],
+					:desk => text_field(params[Facet::DESK]),
 					:date => date_field(params[Facet::DATE]),
 					:section_page => params[Facet::SECTION_PAGE],
-					:source => params[Facet::SOURCE],
+					:source => text_field(params[Facet::SOURCE]),
 					
 					# FACETS THAT RETURN ARRAYS
 					:classifiers => facet_params(params, Facet::CLASSIFIERS),
 					:geographic => facet_params(params, Facet::GEOGRAPHIC)
 				)
+				
+				article
 			end
 			
 			def self.search(query, params={})

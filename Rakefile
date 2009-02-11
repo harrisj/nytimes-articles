@@ -9,6 +9,9 @@ begin
     s.homepage = "http://github.com/harrisj/nytimes-articles"
     s.description = "A gem for accessing the New York Times Article Search API"
     s.authors = ["Jacob Harris"]
+		s.requirements << 'Unicode'
+		s.requirements << 'The htmlentities gem'
+		s.add_dependency('htmlentities')
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
