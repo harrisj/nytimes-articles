@@ -105,33 +105,51 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 
-		context "query parameters" do
-			context "abstract" do
-				should "be prefixed with the abstract: field identifier in the query"
-				should "cast the argument to a string (will figure out processing later)"
-			end
-
-			context "author" do
-				should "be prefixed with the author: field identifier in the query"
-				should "cast the argument to a string (will figure out processing later)"
-			end
-
-			context "body" do
-				should "be prefixed with the body: field identifier in the query"
-				should "cast the argument to a string (will figure out processing later)"
-			end
-
-			context "byline" do
-				should "be prefixed with the body: field identifier in the query"
-				should "cast the argument to a string (will figure out processing later)"
-			end
-
-			context "classifiers" do
-				should "be prefixed with classifiers_facet"
-				should "send arguments as an array"
-				should "accept either string or Facet object for each array element"
+		Article::TEXT_FIELDS.each do |tf|
+			context ":#{tf} parameter" do
+				should "prefix each non-quoted term with the #{tf}: field identifier in the query to the API" do
+					Article.expects(:invoke).with(has_entry("query", "#{tf}:ice #{tf}:cream"))
+					Article.search tf.to_sym => 'ice cream'
+				end
+				
+				should "prefix -terms (excluded terms) with -#{tf}:" do
+					Article.expects(:invoke).with(has_entry("query", "#{tf}:ice -#{tf}:cream"))
+					Article.search tf.to_sym => 'ice -cream'
+				end
+				
+				should "put quoted terms behind the field spec" do
+					Article.expects(:invoke).with(has_entry("query", "#{tf}:\"ice cream\" #{tf}:cone"))
+					Article.search tf.to_sym => '"ice cream" cone'
+				end
+				
+				should "handle complicated combinations of expressions" do
+					Article.expects(:invoke).with(has_entry("query", "#{tf}:\"ice cream\" -#{tf}:cone #{tf}:\"waffle\""))
+					Article.search tf.to_sym => '"ice cream" -cone "waffle"'
+				end
 			end
 		end
+		
+		# context "query parameters" do
+		# 	context "abstract" do
+		# 		should "be prefixed with the abstract: field identifier in the query"
+		# 		should "cast the argument to a string (will figure out processing later)"
+		# 	end
+		# 
+		# 	context "author" do
+		# 		should "be prefixed with the author: field identifier in the query"
+		# 		should "cast the argument to a string (will figure out processing later)"
+		# 	end
+		# 
+		# 	context "body" do
+		# 		should "be prefixed with the body: field identifier in the query"
+		# 		should "cast the argument to a string (will figure out processing later)"
+		# 	end
+		# 
+		# 	context "byline" do
+		# 		should "be prefixed with the body: field identifier in the query"
+		# 		should "cast the argument to a string (will figure out processing later)"
+		# 	end
+		# end
 	end
 
 	context "Article.init_from_api" do

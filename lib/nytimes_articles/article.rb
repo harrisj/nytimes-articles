@@ -45,6 +45,20 @@ module Nytimes
 				coder.decode(value)
 			end
 			
+			def self.text_argument(field, argument)
+				arg = argument.dup
+				subquery = []
+				while term = arg.slice!(%r{("[^"]+")|\S+})
+					if term =~ /^\-/
+						subquery << "-#{field}:#{term[1..term.length]}"
+					else
+						subquery << "#{field}:#{term}"
+					end
+				end
+				
+				subquery.join(' ')
+			end
+			
 			def self.integer_field(value)
 				return nil if value.nil?
 				value.to_i
@@ -105,6 +119,16 @@ module Nytimes
 				
 				if params[:query]
 					api_params['query'] = params[:query]
+				else
+					query = []
+					
+					TEXT_FIELDS.each do |tf|
+						if params[tf.to_sym]
+							query << text_argument(tf, params[tf.to_sym])
+						end
+					end
+					
+					api_params['query'] = query.join(' ')
 				end
 				
 				if params[:rank]
