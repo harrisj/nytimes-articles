@@ -71,6 +71,32 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 
+		context "fields" do
+			should "pass all fields when given the :all argument" do
+				Article.expects(:invoke).with(has_entry('fields', Article::ALL_FIELDS.join(',')))
+				Article.search "FOO BAR", :fields => :all
+			end
+			
+			should "accept a single string as an argument" do
+				Article.expects(:invoke).with(has_entry('fields', 'body'))
+				Article.search "FOO BAR", :fields => 'body'
+			end
+			
+			should "accept a single symbol as an argument" do
+				Article.expects(:invoke).with(has_entry('fields', 'body'))
+				Article.search "FOO BAR", :fields => :body
+			end
+			
+			should "accept an array of strings and symbols" do
+				Article.expects(:invoke).with(has_entry('fields', 'abstract,body'))
+				Article.search "FOO BAR", :fields => [:abstract, 'body']
+			end
+			
+			should "raise an ArgumentError otherwise" do
+				assert_raise(ArgumentError) { Article.search :fields => 12 }
+			end
+		end
+
 		context "offset" do
 			should "pass through an explicit offset parameter if specified" do
 				Article.expects(:invoke).with(has_entry("offset", 10))

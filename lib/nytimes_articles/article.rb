@@ -101,6 +101,7 @@ module Nytimes
 				api_params = {}
 				
 				add_query_params(api_params, params)
+				add_fields_param(api_params, params)
 				add_facets_param(api_params, params)
 				add_rank_params(api_params, params)
 				add_date_params(api_params, params)
@@ -119,6 +120,21 @@ private
 				if in_params[:facets]
 					out_params['facets'] = in_params[:facets].to_a
 				end
+			end
+			
+			def self.add_fields_param(out_params, in_params)
+				case in_params[:fields]
+				when nil
+					# do nothing
+				when :all
+					out_params['fields'] = ALL_FIELDS.join(',')
+				when String, Symbol
+					out_params['fields'] = in_params[:fields].to_s
+				when Array
+					out_params['fields'] = in_params[:fields].map {|f| f.to_s}.join(',')
+				else
+					raise ArgumentError, "Fields must either be :all, a single field name, or an array of field names (either strings or symbols)"
+				end	
 			end
 			
 			def self.add_query_params(out_params, in_params)

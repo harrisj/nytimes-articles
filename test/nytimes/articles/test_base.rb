@@ -7,8 +7,8 @@ class TestNytimes::TestArticles::TestBase < Test::Unit::TestCase
 			assert_match %r{v1}, api_url_for 
 		end
 		
-		should "be of the form /svc/search/VERSION/articles" do
-			assert_match %r{/svc/search/[^/]+/articles}, api_url_for
+		should "be of the form /svc/search/VERSION/article" do
+			assert_match %r{/svc/search/[^/]+/article}, api_url_for
 		end
 	end
 	

@@ -7,7 +7,7 @@ module Nytimes
 		class Base
 			API_SERVER = 'api.nytimes.com'
 			API_VERSION = 'v1'
-			API_NAME = 'articles'
+			API_NAME = 'article'
 			API_BASE = "/svc/search/#{API_VERSION}/#{API_NAME}"
 
 			@@api_key = nil
@@ -36,7 +36,7 @@ module Nytimes
 			def self.build_request_url(params)
 				URI::HTTP.build :host => API_SERVER,
 				:path => API_BASE,
-				:query => params.map {|k,v| "#{k}=#{v}"}.join('&')
+				:query => params.map {|k,v| "#{URI.escape(k)}=#{URI.escape(v)}"}.join('&')
 			end
 			
 			def self.text_field(value)
@@ -63,7 +63,13 @@ module Nytimes
 
 					full_params = params.merge 'api-key' => @@api_key
 					uri = build_request_url(full_params)
+					
+					# puts uri
+					
 					reply = uri.read
+					
+					# puts reply
+					
 					parsed_reply = JSON.parse reply
 
 					if parsed_reply.nil?
