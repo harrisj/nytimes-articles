@@ -59,11 +59,16 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			# should "accept a date_range argument with a begin and end date argument"
 		end
 
-		context "return_facets" do
-			should "accept a single string"
+		context "facets" do
+			should "accept a single string" do
+				Article.expects(:invoke).with(has_entry("facets", [Facet::DATE]))
+				Article.search "FOO BAR", :facets => Facet::DATE
+			end
 
-			should "accept an array of strings"
-			should "also accept Facet instances and use their type in the search"
+			should "accept an array of strings" do
+				Article.expects(:invoke).with(has_entry("facets", [Facet::DATE, Facet::GEOGRAPHIC]))
+				Article.search "FOO BAR", :facets => [Facet::DATE, Facet::GEOGRAPHIC]
+			end
 		end
 
 		context "offset" do
