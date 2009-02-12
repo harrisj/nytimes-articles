@@ -23,26 +23,24 @@ class TestNytimes::TestArticles::TestFacet < Test::Unit::TestCase
 	
 	context "Facet.init_from_api" do
 		setup do
-			@facet_type = :geo
-			@term = "Brookyln, NY"
-			@api_hash = {"term" => @term, "count" => "92"}
-			@facet = Facet.init_from_api(@facet_type, @api_hash)
-		end
-
-		should "take the facet_type as the first argument" do
-			assert_equal :geo, @facet.facet_type
+			@hash = {"date" => [{"count" => 36 , "term" => "19960630"} , {"count" => 36 , "term" => "19990523"}]}
+			@facets = Facet.init_from_api(@hash)
 		end
 		
-		should "accept the hash for the facet as the second argument" do
-			assert_equal @term, @facet.term
+		should "return nil if reply from API has no facets section" do
+			assert_nil Facet.init_from_api(nil)
 		end
 		
-		should "return a valid Facet instance" do
-			assert_kind_of Facet, @facet
+		should "return a hash indexed by the facet name from the API" do
+			assert_kind_of(Hash, @facets)
+			assert_same_elements @hash.keys, @facets.keys
 		end
 		
-		should "handle the count being a string on the input" do
-			assert_equal 92, @facet.count
+		should "return an array of Facet objects as the value for a key" do
+			first_key = @facets.keys.first
+			assert_kind_of Array, @facets[first_key]
+			assert @facets[first_key].all? {|f| f.is_a? Facet }
+			assert @facets[first_key].all? {|f| f.facet_type == first_key }
 		end
 	end
 end

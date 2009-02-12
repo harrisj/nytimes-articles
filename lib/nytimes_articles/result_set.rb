@@ -5,7 +5,7 @@ module Nytimes
 	module Articles
 		class ResultSet < Base
 			extend Forwardable
-			attr_reader :offset, :total_results, :results
+			attr_reader :offset, :total_results, :results, :facets
 			
 			BATCH_SIZE = 10
 			
@@ -15,6 +15,7 @@ module Nytimes
 				@offset = params[:offset]
 				@total_results = params[:total_results]
 				@results = params[:results]
+				@facets = params[:facets]
 			end
 			
 			def page_number
@@ -30,7 +31,9 @@ module Nytimes
 			def self.init_from_api(api_hash)
 				self.new(:offset => integer_field(api_hash['offset']),
 								 :total_results => integer_field(api_hash['total']),
-								 :results => api_hash['results'].map {|r| Article.init_from_api(r)})
+								 :results => api_hash['results'].map {|r| Article.init_from_api(r)},
+								 :facets => Facet.init_from_api(api_hash['facets'])
+								)
 			end
 		end
 	end

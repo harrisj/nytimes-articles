@@ -44,8 +44,26 @@ module Nytimes
 				@count = count
 			end
 			
-			def self.init_from_api(type, hash)
-				self.new(type, hash['term'], hash['count'].to_i)
+			# def self.init_from_api(type, hash)
+			# 	self.new(type, hash['term'], hash['count'].to_i)
+			# end
+			
+			def self.init_from_api(api_hash)
+				return nil if api_hash.nil?
+				
+				unless api_hash.is_a? Hash
+					raise ArgumentError, "expecting a Hash only"
+				else
+					return nil if api_hash.empty?
+				end
+				
+				out = {}
+				
+				api_hash.each_pair do |k,v|
+					out[k] = v.map {|f| Facet.new(k, f['term'], f['count'])}
+				end
+				
+				out
 			end
 		end
 	end

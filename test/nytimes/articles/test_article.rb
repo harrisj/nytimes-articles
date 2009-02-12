@@ -61,12 +61,12 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 
 		context "facets" do
 			should "accept a single string" do
-				Article.expects(:invoke).with(has_entry("facets", [Facet::DATE]))
+				Article.expects(:invoke).with(has_entry("facets", Facet::DATE))
 				Article.search "FOO BAR", :facets => Facet::DATE
 			end
 
 			should "accept an array of strings" do
-				Article.expects(:invoke).with(has_entry("facets", [Facet::DATE, Facet::GEOGRAPHIC]))
+				Article.expects(:invoke).with(has_entry("facets", [Facet::DATE, Facet::GEOGRAPHIC].join(',')))
 				Article.search "FOO BAR", :facets => [Facet::DATE, Facet::GEOGRAPHIC]
 			end
 		end

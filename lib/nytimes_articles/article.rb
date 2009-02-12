@@ -80,6 +80,7 @@ module Nytimes
 					:section_page => params[Facet::SECTION_PAGE],
 					:source => text_field(params[Facet::SOURCE]),
 					
+					# FIXME! MORE FACET PARAMS
 					# FACETS THAT RETURN ARRAYS
 					:classifiers => facet_params(params, Facet::CLASSIFIERS),
 					:geographic => facet_params(params, Facet::GEOGRAPHIC)
@@ -118,7 +119,7 @@ private
 			
 			def self.add_facets_param(out_params, in_params)
 				if in_params[:facets]
-					out_params['facets'] = in_params[:facets].to_a
+					out_params['facets'] = in_params[:facets].to_a.join(',')
 				end
 			end
 			
