@@ -87,11 +87,7 @@ module Nytimes
 				
 				article
 			end
-			
-			def self.parse_reply(reply)
-				ResultSet.init_from_api(reply)
-			end
-			
+					
 			def self.search(query, params={})
 				params = params.dup
 				
@@ -104,56 +100,85 @@ module Nytimes
 				
 				api_params = {}
 				
-				if params[:query]
-					api_params['query'] = params[:query]
-				else
-					query = []
-					
-					TEXT_FIELDS.each do |tf|
-						if params[tf.to_sym]
-							query << text_argument(tf, params[tf.to_sym])
-						end
-					end
-					
-					api_params['query'] = query.join(' ')
-				end
-				
-				if params[:rank]
-					unless [:newest, :oldest, :closest].include?(params[:rank])
-						raise ArgumentError, "Rank should only be :newest | :oldest | :closest"
-					end
-					
-					api_params['rank'] = params[:rank].to_s
-				end
-				
-				if params[:begin_date]
-					api_params['begin_date'] = date_argument(:begin_date, params[:begin_date])
-				end
-				
-				if params[:end_date]
-					api_params['end_date'] = date_argument(:end_date, params[:end_date])
-				end
-				
-				if params[:page]
-					unless params[:page].is_a? Integer
-						raise ArgumentError, "Page must be an integer"
-					end
-					
-					# Page counts from 1, offset counts from 0
-					api_params['offset'] = params[:page] - 1
-				end
-				
-				if params[:offset]
-					unless params[:offset].is_a? Integer
-						raise ArgumentError, "Offset must be an integer"
-					end
-					
-					api_params['offset'] = params[:offset]
-				end
-				
+				add_query_params(api_params, params)
+				add_facets_param(api_params, params)
+				add_rank_params(api_params, params)
+				add_date_params(api_params, params)
+				add_offset_params(api_params, params)
+								
 				reply = invoke(api_params)
 				parse_reply(reply)
 			end
+			
+private
+			def self.parse_reply(reply)
+				ResultSet.init_from_api(reply)
+			end
+			
+			def self.add_facets_param(out_params, in_params)
+				if in_params[:facets]
+					out_params['facets'] = in_params[:facets].to_a
+				end
+			end
+			
+			def self.add_query_params(out_params, in_params)
+				query = []
+					
+				query << in_params[:query]
+				
+				# Also add other text params to the query
+				TEXT_FIELDS.each do |tf|
+					if in_params[tf.to_sym]
+						query << text_argument(tf, in_params[tf.to_sym])
+					end
+				end
+					
+				out_params['query'] = query.compact.join(' ')
+			end
+			
+			def self.add_rank_params(out_params, in_params)
+				if in_params[:rank]
+					unless [:newest, :oldest, :closest].include?(in_params[:rank])
+						raise ArgumentError, "Rank should only be :newest | :oldest | :closest"
+					end
+					
+					out_params['rank'] = in_params[:rank].to_s
+				end
+			end
+			
+			def self.add_date_params(out_params, in_params)
+				if in_params[:begin_date]
+					out_params['begin_date'] = date_argument(:begin_date, in_params[:begin_date])
+				end
+				
+				if in_params[:end_date]
+					out_params['end_date'] = date_argument(:end_date, in_params[:end_date])
+				end
+			end
+			
+			def self.add_offset_params(out_params, in_params)
+				if in_params[:page]
+					unless in_params[:page].is_a? Integer
+						raise ArgumentError, "Page must be an integer"
+					end
+					
+					unless in_params[:page] >= 1
+						raise ArgumentError, "Page must count up from 1"
+					end
+					
+					# Page counts from 1, offset counts from 0
+					out_params['offset'] = in_params[:page] - 1
+				end
+				
+				if in_params[:offset]
+					unless in_params[:offset].is_a? Integer
+						raise ArgumentError, "Offset must be an integer"
+					end
+					
+					out_params['offset'] = in_params[:offset]
+				end
+			end
+			
 		end
 	end
 end

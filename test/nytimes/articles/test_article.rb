@@ -18,7 +18,10 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			Article.search "FOO BAR"
 		end
 
-		should "accept a Hash for the first argument"
+		should "accept a Hash for the first argument" do
+			Article.expects(:invoke).with(has_entry("query", "FOO BAR"))
+			Article.search :query => 'FOO BAR', :page => 2
+		end
 
 		context "date ranges" do
 			should "pass a string argument to begin_date straight through" do
@@ -85,6 +88,10 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 
 			should "raise an ArgumentError if the page is not an Integer" do
 				assert_raise(ArgumentError) { Article.search :page => 'orange' }
+			end
+			
+			should "raise an ArgumentError if the page is less than 1" do
+				assert_raise(ArgumentError) { Article.search :page => 0 }
 			end
 
 			should "use the :offset argument if both an :offset and :page are provided" do
