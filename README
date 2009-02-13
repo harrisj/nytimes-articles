@@ -2,7 +2,30 @@ nytimes-articles================
 
 A simple GEM for interacting with the New York Times' Article Search API (http://developer.nytimes.com/docs/article_search_api)
 
+USAGE
+=====
+
+	require 'rubygems'
+	require 'nytimes-articles'
+	
+	include Nytimes::Articles
+	Base.api_key = 'YOUR API KEY'
+	Article.search 'ice cream'
+	Article.search :title => '"ice cream"', :since => 3.weeks.ago, :fields => :all
+	Article.search :author => 'Sewell Chan', :facets => [Facet::GEOGRAPHIC, Facet::PERSON]
+
+TODO
+====
+
+The following functionality is still to be implemented:
+
+* Boolean field searches
+* Parsing multimedia and related_multimedia fields
+* Parsing smallimage fields
+* Searching for articles with small images thumbnails
+* Coercion of some facet results into more suitable Ruby types (mostly Dates / Integer fields)
+* Next / previous result set pagination (with memoization?)
+
 COPYRIGHT
 =========
-
 Copyright (c) 2008 Jacob Harris. See LICENSE for details.

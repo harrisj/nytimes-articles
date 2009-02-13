@@ -15,6 +15,8 @@ module Nytimes
 			attr_reader *ALL_FIELDS
 			attr_reader *(Facet::ALL_FACETS.map {|f| f.gsub('_facet', '')})
 			
+			##
+			# Create a new Article from hash arguments. You really don't need to call this as Article instances are automatically returned from the API
 			def initialize(params={})
 				params.each_pair do |k,v|
 					instance_variable_set("@#{k}", v)
