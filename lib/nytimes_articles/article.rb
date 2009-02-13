@@ -141,6 +141,7 @@ module Nytimes
 				api_params = {}
 
 				add_query_params(api_params, params)
+				add_search_facets_param(api_params, params)
 				add_fields_param(api_params, params)
 				add_facets_param(api_params, params)
 				add_rank_params(api_params, params)
@@ -217,6 +218,58 @@ module Nytimes
 				end
 
 				out_params['query'] = query.compact.join(' ')
+				out_params['query'] = nil if out_params['query'].empty?
+			end
+
+			def self.valid_facet_param(facet)
+				facet.is_a?(Facet) ||
+				(facet.is_a?(Array) && facet.size == 2 && facet.all? {|f| f.is_a? String})
+			end
+			
+			def self.facet_argument(facet)
+				if facet.is_a? Facet
+					name = facet.facet_type
+					value = facet.term
+				elsif facet.is_a? Array
+					name = facet[0]
+					value = facet[1]
+				else
+					raise ArgumentError, "Unexpected argument passed to facet_argument"
+				end
+				
+				if value =~ /\s/
+					"#{name}:\"#{value}\""
+				else
+					"#{name}:#{value}"
+				end
+			end
+
+			def self.add_search_facets_param(out_params, in_params)
+				query = out_params['query']
+				
+				search_facets = []
+				
+				if in_params[:search_facets]
+					facets = in_params[:search_facets]
+					case facets
+					when String
+						search_facets = [facets]
+					when Facet
+						search_facets = [facet_argument(facets)]
+					when Array
+						if valid_facet_param(facets)
+							search_facets = [facet_argument(facets)]
+						else
+							unless facets.all? {|f| valid_facet_param(f)}
+								raise ArgumentError, "Argument to :search_facets should only be pairs or facet instances"
+							end
+							
+							search_facets = facets.map {|f| facet_argument(f)}
+						end
+					end
+					
+					out_params['query'] = ([query] + search_facets).compact.join(' ')
+				end
 			end
 
 			def self.add_rank_params(out_params, in_params)

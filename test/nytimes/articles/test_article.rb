@@ -80,6 +80,40 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				Article.search "FOO BAR", :facets => [Facet::DATE, Facet::GEOGRAPHIC]
 			end
 		end
+		
+		context "search_facets" do
+			should "accept a String" do
+				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEOGRAPHIC}:CALIFORNIA"))
+				Article.search :search_facets => "#{Facet::GEOGRAPHIC}:CALIFORNIA"
+			end
+			
+			should "accept a single pair of Facet string, term" do
+				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEOGRAPHIC}:CALIFORNIA"))
+				Article.search :search_facets => [Facet::GEOGRAPHIC, 'CALIFORNIA']
+			end
+			
+			should "accept an array of Facet strings, terms" do
+				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEOGRAPHIC}:CALIFORNIA #{Facet::GEOGRAPHIC}:\"GREAT BRITAIN\""))
+				Article.search :search_facets => [[Facet::GEOGRAPHIC, 'CALIFORNIA'], [Facet::GEOGRAPHIC, 'GREAT BRITAIN']]
+			end
+			
+			should "accept a single Facet object" do
+				f = Facet.new(Facet::GEOGRAPHIC, 'CALIFORNIA', 2394)
+				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEOGRAPHIC}:CALIFORNIA"))
+				Article.search :search_facets => f
+			end
+			
+			should "accept an array of Facet objects and pairs" do
+				f = Facet.new(Facet::GEOGRAPHIC, 'CALIFORNIA', 2394)
+				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEOGRAPHIC}:CALIFORNIA #{Facet::GEOGRAPHIC}:\"GREAT BRITAIN\""))
+				Article.search :search_facets => [f, [Facet::GEOGRAPHIC, 'GREAT BRITAIN']]
+			end
+			
+			should "not stomp on an existing query string" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream #{Facet::GEOGRAPHIC}:CALIFORNIA"))
+				Article.search "ice cream", :search_facets => "#{Facet::GEOGRAPHIC}:CALIFORNIA"
+			end
+		end
 
 		context ":fields" do
 			context "for the :all argument" do
