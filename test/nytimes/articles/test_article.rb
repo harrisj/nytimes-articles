@@ -56,7 +56,17 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				assert_raise(ArgumentError) { Article.search :end_date => 23 }
 			end
 
-			# should "accept a date_range argument with a begin and end date argument"
+			context ":before" do
+				should "add a begin_date in 1980 if no :since or :begin_date argument is provided"
+				should "not add a begin_date is there is a :since argument"
+				should "not add a begin_date if there is a :begin_date argument already"
+			end
+			
+			context ":since" do
+				should "add an end_date of now if no :before or :end_date argument is provided"
+				should "not add an end_date is there is a :before argument"
+				should "not add an end_date if there is a :end_date argument already"
+			end
 		end
 
 		context "facets" do
@@ -71,10 +81,28 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 
-		context "fields" do
-			should "pass all fields when given the :all argument" do
-				Article.expects(:invoke).with(has_entry('fields', Article::ALL_FIELDS.join(',')))
-				Article.search "FOO BAR", :fields => :all
+		context ":fields" do
+			context "for the :all argument" do
+				should "pass all fields in a comma-delimited list" do
+					Article.expects(:invoke).with(has_entry('fields', Article::ALL_FIELDS.join(',')))
+					Article.search "FOO BAR", :fields => :all
+				end
+			end
+			
+			context "for the :none argument" do
+				should "request a blank space for the fields argument"
+				should "request the standard :facets if no :facets have been explicitly provided"
+				should "request the given :facets field if provided"
+			end
+			
+			context ":thumbnail" do
+				should "accept the symbol version of the argument"
+				should "accept the string version of the argument"
+				should "request all the thumbnail image fields from the API"
+			end
+			
+			context ":multimedia" do
+				should "be implemented"
 			end
 			
 			should "accept a single string as an argument" do
