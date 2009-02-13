@@ -1,9 +1,8 @@
-nytimes-articles================
+= nytimes-articles
 
 A simple GEM for interacting with the New York Times' Article Search API (http://developer.nytimes.com/docs/article_search_api)
 
-USAGE
-=====
+== USAGE
 
 	require 'rubygems'
 	require 'nytimes-articles'
@@ -14,8 +13,7 @@ USAGE
 	Article.search :title => '"ice cream"', :since => 3.weeks.ago, :fields => :all
 	Article.search :author => 'Sewell Chan', :facets => [Facet::GEOGRAPHIC, Facet::PERSON]
 
-TODO
-====
+== TODO
 
 The following functionality is still to be implemented:
 
@@ -26,6 +24,5 @@ The following functionality is still to be implemented:
 * Coercion of some facet results into more suitable Ruby types (mostly Dates / Integer fields)
 * Next / previous result set pagination (with memoization?)
 
-COPYRIGHT
-=========
+== COPYRIGHT
 Copyright (c) 2008 Jacob Harris. See LICENSE for details.

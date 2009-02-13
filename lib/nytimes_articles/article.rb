@@ -82,8 +82,7 @@ module Nytimes
 			# article, but it takes a large number of potential parameters. All of these fields and then some can be returned as display fields
 			# in the articles retrieved from search (see the <tt>:fields</tt> argument below)
 			#
-			# TEXT FIELDS
-			# ===========
+			# == TEXT FIELDS
 			#
 			# If passed a string as the first argument, the text will be used to search against the title, byline and body fields of articles. This text takes
 			# the following boolean syntax:
@@ -103,22 +102,18 @@ module Nytimes
 			# * <tt>:title</tt> - The article title (headline); corresponds to the headline that appeared in the printed newspaper
 			# * <tt>:url</tt> - The URL of the article on NYTimes.com
 			#
-			# FACET SEARCHING
-			# ===============
+			# == FACET SEARCHING
 			# TO BE IMPLEMENTED
 			#
-			# OTHER SEARCH FIELDS
-			# ===================
+			# == OTHER SEARCH FIELDS
 			# * <tt>:fee</tt> - to be implemented
 			# * <tt>:begin_date</tt>, <tt>:end_date</tt> - the parameters are used to specify a start and end date for search results. BOTH of these must be provided or the API will return an error. Accepts either a Time/Date argument or a string of the format YYYYMMDD. For convenience the following alternative methods are provided
 			# * <tt>:before</tt> - an alternative to :end_date. Automatically adds a :before_date of sometime in 1980 if no :since argument is also provided
 			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided.
 			#
-			# FACET SUMMARIES
-			# ===============
+			# == FACET SUMMARIES
 		  #
-		  # ARTICLE FIELDS
-		  # ==============
+		  # == ARTICLE FIELDS
 		  #
 		  # The <tt>:fields</tt> parameter is used to indicate what fields are returned with each article from the search results. If not specified, only
 		  # the following fields are returned for each article: body, byline, date, title, and url. To return specific fields, any of the search fields
