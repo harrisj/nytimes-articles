@@ -112,6 +112,9 @@ module Nytimes
 			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided.
 			#
 			# == FACET SUMMARIES
+		  # 
+		  # The <tt>:facets</tt> argument can be used to specify up to 5 facet fields to be returned alongside the search that provide overall counts
+		  # of how much each facet term appears in the search results. FIXME provide list of available facets as well as description of :nytd parameter.
 		  #
 		  # == ARTICLE FIELDS
 		  #
