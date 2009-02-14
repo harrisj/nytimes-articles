@@ -265,42 +265,50 @@ module Nytimes
 				"#{'-' if exclude}#{name}:[#{value.join(',')}]"
 			end
 
-			def self.add_search_facets_param(out_params, in_params)
-				query = out_params['query']
-				
+			def self.parse_facet_params(facets, exclude = false)
 				search_facets = []
-				
-				if in_params[:search_facets]
-					facets = in_params[:search_facets]
-					case facets
-					when String
-						search_facets = [facets]
-					when Facet
-						search_facets = [facet_argument(facets.facet_type, facets.term)]
-					when Array
-						unless facets.all? {|f| f.is_a? Facet }
-							raise ArgumentError, "Only Facet instances can be passed in as an array; use Hash for Facet::Name => values input"
-						end
 						
-						facet_hash = {}
-						facets.each do |f|
-							unless facet_hash[f.facet_type]
-								facet_hash[f.facet_type] = []
-							end
-							
-							facet_hash[f.facet_type] << f.term
-						end
-						
-						facet_hash.each_pair do |k,v|
-							search_facets << facet_argument(k, v)
-						end
-					when Hash
-						facets.each_pair do |k,v|
-							search_facets << facet_argument(k, v)
-						end
+				case facets
+				when nil
+					# do nothing
+				when String
+					search_facets = [facets]
+				when Facet
+					search_facets = [facet_argument(facets.facet_type, facets.term, exclude)]
+				when Array
+					unless facets.all? {|f| f.is_a? Facet }
+						raise ArgumentError, "Only Facet instances can be passed in as an array; use Hash for Facet::Name => values input"
 					end
 					
-					out_params['query'] = ([query] + search_facets).compact.join(' ')
+					facet_hash = {}
+					facets.each do |f|
+						unless facet_hash[f.facet_type]
+							facet_hash[f.facet_type] = []
+						end
+						
+						facet_hash[f.facet_type] << f.term
+					end
+					
+					facet_hash.each_pair do |k,v|
+						search_facets << facet_argument(k, v, exclude)
+					end
+				when Hash
+					facets.each_pair do |k,v|
+						search_facets << facet_argument(k, v, exclude)
+					end
+				end
+				
+				search_facets
+			end
+			
+			def self.add_search_facets_param(out_params, in_params)
+				query = out_params['query']
+
+				search_facets = parse_facet_params(in_params[:search_facets])
+				exclude_facets = parse_facet_params(in_params[:exclude_facets], true)
+				
+				unless search_facets.empty? && exclude_facets.empty?
+					out_params['query'] = ([query] + search_facets + exclude_facets).compact.join(' ')
 				end
 			end
 

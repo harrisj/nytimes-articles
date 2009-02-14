@@ -125,6 +125,50 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 
+		context "exclude_facets" do
+			should "accept a String" do
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEOGRAPHIC}:[CALIFORNIA]"))
+				Article.search :exclude_facets => "-#{Facet::GEOGRAPHIC}:[CALIFORNIA]"
+			end
+			
+			should "accept a single hash value Facet string to a term" do
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEOGRAPHIC}:[CALIFORNIA]"))
+				Article.search :exclude_facets => {Facet::GEOGRAPHIC => 'CALIFORNIA'}
+			end
+			
+			should "accept an Facet string hashed to an array terms" do
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEOGRAPHIC}:[CALIFORNIA,GREAT BRITAIN]"))
+				Article.search :exclude_facets => {Facet::GEOGRAPHIC => ['CALIFORNIA', 'GREAT BRITAIN']}
+			end
+			
+			should "accept a single Facet object" do
+				f = Facet.new(Facet::GEOGRAPHIC, 'CALIFORNIA', 2394)
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEOGRAPHIC}:[CALIFORNIA]"))
+				Article.search :exclude_facets => f
+			end
+			
+			should "accept an array of Facet objects" do
+				f = Facet.new(Facet::GEOGRAPHIC, 'CALIFORNIA', 2394)
+				f2 = Facet.new(Facet::NYTD_ORGANIZATION, 'University Of California', 12)
+				
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEOGRAPHIC}:[CALIFORNIA] -#{Facet::NYTD_ORGANIZATION}:[University Of California]"))
+				Article.search :exclude_facets => [f, f2]
+			end
+			
+			should "merge multiple Facets objects in the array of the same type into one array" do
+				f = Facet.new(Facet::GEOGRAPHIC, 'CALIFORNIA', 2394)
+				f2 = Facet.new(Facet::GEOGRAPHIC, 'IOWA', 12)
+				
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEOGRAPHIC}:[CALIFORNIA,IOWA]"))
+				Article.search :exclude_facets => [f, f2]
+			end
+			
+			should "not stomp on an existing query string" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream -#{Facet::GEOGRAPHIC}:[CALIFORNIA]"))
+				Article.search "ice cream", :exclude_facets => {Facet::GEOGRAPHIC => "CALIFORNIA"}
+			end
+		end
+
 		context ":fields" do
 			context "for the :all argument" do
 				should "pass all fields in a comma-delimited list" do
