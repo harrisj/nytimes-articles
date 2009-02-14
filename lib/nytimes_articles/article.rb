@@ -86,7 +86,7 @@ module Nytimes
 			#
 			# If passed a string as the first argument, the text will be used to search against the title, byline and body fields of articles. This text takes
 			# the following boolean syntax:
-			# * <tt>dog food</tt> - similar to doing a boolean AND search on both terms
+			# * <tt>dog food</tt> - similar to doing a boolean =AND search on both terms
 			# * <tt>"ice cream"</tt> - matches the words as a phrase in the text
 			# * <tt>ice -cream</tt> - to search text that doesn't contain a term, prefix with the minus sign.
 			#
@@ -103,7 +103,38 @@ module Nytimes
 			# * <tt>:url</tt> - The URL of the article on NYTimes.com
 			#
 			# == FACET SEARCHING
-			# TO BE IMPLEMENTED
+			# 
+		  # Beyond query searches, the NY Times API also allows you to search against controlled vocabulary metadata associated with the article. This is powerful, if you want precise matching against specific
+		  # people, places, etc (eg, "I want stories about Ford the former president, not Ford the automative company"). The following Facet constants are supported.
+		  #
+			# * <tt>Facet::CLASSIFIERS</tt> - Taxonomic classifiers that reflect Times content categories, such as _Top/News/Sports_
+			# * <tt>Facet::COLUMN</tt> - A Times column title (if applicable), such as _Weddings_ or _Ideas & Trends_
+			# * <tt>Facet::DATE</tt> - The publication date in YYYYMMDD format
+			# * <tt>Facet::DAY_OF_WEEK</tt> - The day of the week (e.g., Monday, Tuesday) the article was published (compare <tt>PUB_DAY</tt>, which is the numeric date rather than the day of the week) 
+			# * <tt>Facet::DESCRIPTION</tt> - Descriptive subject terms assigned by Times indexers (must be in UPPERCASE)
+			# * <tt>Facet::DESK</tt> - The Times desk that produced the story (e.g., _Business/Financial Desk_)
+			# * <tt>Facet::GEOGRAPHIC</tt> - Standardized names of geographic locations, assigned by Times indexers (must be in UPPERCASE)
+			# * <tt>Facet::MATERIAL_TYPE</tt> - The general article type, such as Biography, Editorial or Review
+			# * <tt>Facet::ORGANIZATION</tt> - Standardized names of people, assigned by Times indexers (must be UPPERCASE)
+			# * <tt>Facet::PAGE</tt>
+			# * <tt>Facet::PERSON</tt>
+			# * <tt>Facet::PUB_DAY</tt>
+			# * <tt>Facet::PUB_MONTH</tt>
+			# * <tt>Facet::PUB_YEAR</tt>
+			# * <tt>Facet::SECTION_PAGE</tt>
+			# * <tt>Facet::SOURCE</tt>
+			# * <tt>Facet::WORKS_MENTIONED</tt>
+			# * <tt>Facet::NYTD_BYLINE</tt>
+			# * <tt>Facet::NYTD_DESCRIPTION</tt>
+			# * <tt>Facet::NYTD_GEOGRAPHIC</tt>
+			# * <tt>Facet::NYTD_ORGANIZATION</tt>
+			# * <tt>Facet::NYTD_PERSON</tt>
+			# * <tt>Facet::NYTD_SECTION</tt>
+			# * <tt>Facet::NYTD_WORKS_MENTIONED</tt>
+			#
+			# The following two search fields are used for facet searching:
+			# * <tt>:search_facets</tt> - takes a single value or array of facets to search. Facets can either be specified as array pairs (like <tt>[Facet::GEOGRAPHIC, 'CALIFORNIA']</tt>) or facets returned from a previous search can be passed directly. A single string can be passed as well if you have hand-crafted string.
+			# * <tt>:exclude_facets</tt> - similar to <tt>:search_facets</tt> but is used to specify a list of facets to exclude.
 			#
 			# == OTHER SEARCH FIELDS
 			# * <tt>:fee</tt> - to be implemented
@@ -221,27 +252,17 @@ module Nytimes
 				out_params['query'] = nil if out_params['query'].empty?
 			end
 
-			def self.valid_facet_param(facet)
-				facet.is_a?(Facet) ||
-				(facet.is_a?(Array) && facet.size == 2 && facet.all? {|f| f.is_a? String})
-			end
+			# def self.valid_facet_param(facet)
+			# 	facet.is_a?(Facet) ||
+			# 	(facet.is_a?(Array) && facet.size == 2 && facet.all? {|f| f.is_a? String})
+			# end
 			
-			def self.facet_argument(facet)
-				if facet.is_a? Facet
-					name = facet.facet_type
-					value = facet.term
-				elsif facet.is_a? Array
-					name = facet[0]
-					value = facet[1]
-				else
-					raise ArgumentError, "Unexpected argument passed to facet_argument"
+			def self.facet_argument(name, value, exclude = false)
+				unless value.is_a? Array
+					value = [value]
 				end
 				
-				if value =~ /\s/
-					"#{name}:\"#{value}\""
-				else
-					"#{name}:#{value}"
-				end
+				"#{'-' if exclude}#{name}:[#{value.join(',')}]"
 			end
 
 			def self.add_search_facets_param(out_params, in_params)
@@ -255,16 +276,27 @@ module Nytimes
 					when String
 						search_facets = [facets]
 					when Facet
-						search_facets = [facet_argument(facets)]
+						search_facets = [facet_argument(facets.facet_type, facets.term)]
 					when Array
-						if valid_facet_param(facets)
-							search_facets = [facet_argument(facets)]
-						else
-							unless facets.all? {|f| valid_facet_param(f)}
-								raise ArgumentError, "Argument to :search_facets should only be pairs or facet instances"
+						unless facets.all? {|f| f.is_a? Facet }
+							raise ArgumentError, "Only Facet instances can be passed in as an array; use Hash for Facet::Name => values input"
+						end
+						
+						facet_hash = {}
+						facets.each do |f|
+							unless facet_hash[f.facet_type]
+								facet_hash[f.facet_type] = []
 							end
 							
-							search_facets = facets.map {|f| facet_argument(f)}
+							facet_hash[f.facet_type] << f.term
+						end
+						
+						facet_hash.each_pair do |k,v|
+							search_facets << facet_argument(k, v)
+						end
+					when Hash
+						facets.each_pair do |k,v|
+							search_facets << facet_argument(k, v)
 						end
 					end
 					
