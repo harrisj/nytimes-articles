@@ -12,6 +12,7 @@ module Nytimes
 
 			@@api_key = nil
 			@@copyright = nil
+			@@debug = false
 
 			##
 			# The copyright footer to be placed at the bottom of any data from the New York Times. Note this is only set after an API call.
@@ -23,6 +24,10 @@ module Nytimes
 			# Set the API key used for operations. This needs to be called before any requests against the API. To obtain an API key, go to http://developer.nytimes.com/
 			def self.api_key=(key)
 				@@api_key = key
+			end
+			
+			def self.debug=(flag)
+				@@debug = flag
 			end
 
 			##
@@ -62,14 +67,11 @@ module Nytimes
 					end
 
 					full_params = params.merge 'api-key' => @@api_key
-					uri = build_request_url(full_params)
+					uri = build_request_url(full_params)	
 					
-					# puts uri
-					
+					puts "REQUEST: #{uri}" if @@debug
+						
 					reply = uri.read
-					
-					# puts reply
-					
 					parsed_reply = JSON.parse reply
 
 					if parsed_reply.nil?
