@@ -116,21 +116,21 @@ module Nytimes
 			# * <tt>Facet::GEOGRAPHIC</tt> - Standardized names of geographic locations, assigned by Times indexers (must be in UPPERCASE)
 			# * <tt>Facet::MATERIAL_TYPE</tt> - The general article type, such as Biography, Editorial or Review
 			# * <tt>Facet::ORGANIZATION</tt> - Standardized names of people, assigned by Times indexers (must be UPPERCASE)
-			# * <tt>Facet::PAGE</tt>
-			# * <tt>Facet::PERSON</tt>
-			# * <tt>Facet::PUB_DAY</tt>
-			# * <tt>Facet::PUB_MONTH</tt>
-			# * <tt>Facet::PUB_YEAR</tt>
-			# * <tt>Facet::SECTION_PAGE</tt>
-			# * <tt>Facet::SOURCE</tt>
-			# * <tt>Facet::WORKS_MENTIONED</tt>
-			# * <tt>Facet::NYTD_BYLINE</tt>
-			# * <tt>Facet::NYTD_DESCRIPTION</tt>
-			# * <tt>Facet::NYTD_GEOGRAPHIC</tt>
-			# * <tt>Facet::NYTD_ORGANIZATION</tt>
-			# * <tt>Facet::NYTD_PERSON</tt>
-			# * <tt>Facet::NYTD_SECTION</tt>
-			# * <tt>Facet::NYTD_WORKS_MENTIONED</tt>
+			# * <tt>Facet::PAGE</tt> - The page the article appeared on (in the printed paper)
+			# * <tt>Facet::PERSON</tt> - Standardized names of people, assigned by Times indexers. When used in a request, values must be UPPERCASE.
+			# * <tt>Facet::PUB_DAY</tt> - The day (DD) segment of date, separated for use as facets
+			# * <tt>Facet::PUB_MONTH</tt> - The month (MM) segment of date, separated for use as facets
+			# * <tt>Facet::PUB_YEAR</tt> - The year (YYYY) segment of date, separated for use as facets
+			# * <tt>Facet::SECTION_PAGE</tt> - The full page number of the printed article (e.g., _D00002_)
+			# * <tt>Facet::SOURCE</tt> - The originating body  (e.g., _AP_, _Dow Jones_, _The New York Times_)
+			# * <tt>Facet::WORKS_MENTIONED</tt> - Literary works mentioned in the article
+			# * <tt>Facet::NYTD_BYLINE</tt> - The article byline, formatted for NYTimes.com
+			# * <tt>Facet::NYTD_DESCRIPTION</tt> - Descriptive subject terms, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case
+			# * <tt>Facet::NYTD_GEOGRAPHIC</tt> - Standardized names of geographic locations, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case
+			# * <tt>Facet::NYTD_ORGANIZATION</tt> - Standardized names of organizations, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case
+			# * <tt>Facet::NYTD_PERSON</tt> - Standardized names of people, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case.
+			# * <tt>Facet::NYTD_SECTION</tt> - The section the article appears in (on NYTimes.com)
+			# * <tt>Facet::NYTD_WORKS_MENTIONED</tt> - Literary works mentioned (titles formatted for use on NYTimes.com)
 			#
 			# The following two search fields are used for facet searching:
 			# * <tt>:search_facets</tt> - takes a single value or array of facets to search. Facets can either be specified as array pairs (like <tt>[Facet::GEOGRAPHIC, 'CALIFORNIA']</tt>) or facets returned from a previous search can be passed directly. A single string can be passed as well if you have hand-crafted string.
@@ -139,8 +139,11 @@ module Nytimes
 			# == OTHER SEARCH FIELDS
 			# * <tt>:fee</tt> - to be implemented
 			# * <tt>:begin_date</tt>, <tt>:end_date</tt> - the parameters are used to specify a start and end date for search results. BOTH of these must be provided or the API will return an error. Accepts either a Time/Date argument or a string of the format YYYYMMDD. For convenience the following alternative methods are provided
-			# * <tt>:before</tt> - an alternative to :end_date. Automatically adds a :before_date of sometime in 1980 if no :since argument is also provided
-			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided.
+			# * <tt>:before</tt> - an alternative to :end_date. Automatically adds a :before_date of sometime in 1980 if no :since argument is also provided; to be implemented
+			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided; to be implemented.
+			# * <tt>:has_thumbnail</tt> - to be implemented
+			# * <tt>:has_multimedia</tt> - to be implemented
+			# * <tt>:has_related_multimedia</tt> - to be implemented
 			#
 			# == FACET SUMMARIES
 		  # 
@@ -156,9 +159,9 @@ module Nytimes
 		  # 
 		  # * <tt>:all</tt> - return all fields for the article
 		  # * <tt>:none</tt> - display only the facet breakdown and no article results
-		  # * <tt>:multimedia</tt> - return any related multimedia links for the article
-		  # * <tt>:thumbnail</tt> - return information for a related thumbnail image (if the article has one)
-		  # * <tt>:word_count</tt> - the word_count of the article
+		  # * <tt>:multimedia</tt> - return any related multimedia links for the article (automatically added if searching with has_multimedia)
+		  # * <tt>:thumbnail</tt> - return information for a related thumbnail image (if the article has one) (automatically included if searching with :has_thumbnail)
+		  # * <tt>:word_count</tt> - the word_count of the article.
 			def self.search(query, params={})
 				params = params.dup
 
