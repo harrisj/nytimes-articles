@@ -169,6 +169,18 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 
+		context ":fee" do
+			should "send through as fee:Y if set to true" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream fee:Y"))
+				Article.search "ice cream", :fee => true
+			end
+			
+			should "send through as -fee:Y if set to false" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream -fee:Y"))
+				Article.search "ice cream", :fee => false
+			end
+		end
+
 		context ":fields" do
 			context "for the :all argument" do
 				should "pass all fields in a comma-delimited list" do
@@ -213,7 +225,31 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 
-		context "offset" do
+		context ":has_multimedia" do
+			should "send through as related_multimedia:Y if set to true" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream related_multimedia:Y"))
+				Article.search "ice cream", :has_multimedia => true
+			end
+			
+			should "send through as -related_multimedia:Y if set to false" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream -related_multimedia:Y"))
+				Article.search "ice cream", :has_multimedia => false
+			end
+		end
+
+		context ":has_thumbnail" do
+			should "send through as small_image:Y if set to true" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream small_image:Y"))
+				Article.search "ice cream", :has_thumbnail => true
+			end
+			
+			should "send through as -small_image:Y if set to false" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream -small_image:Y"))
+				Article.search "ice cream", :has_thumbnail => false
+			end
+		end
+
+		context ":offset" do
 			should "pass through an explicit offset parameter if specified" do
 				Article.expects(:invoke).with(has_entry("offset", 10))
 				Article.search :offset => 10

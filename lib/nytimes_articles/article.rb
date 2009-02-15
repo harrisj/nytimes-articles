@@ -143,7 +143,6 @@ module Nytimes
 			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided; to be implemented.
 			# * <tt>:has_thumbnail</tt> - to be implemented
 			# * <tt>:has_multimedia</tt> - to be implemented
-			# * <tt>:has_related_multimedia</tt> - to be implemented
 			#
 			# == FACET SUMMARIES
 		  # 
@@ -159,8 +158,8 @@ module Nytimes
 		  # 
 		  # * <tt>:all</tt> - return all fields for the article
 		  # * <tt>:none</tt> - display only the facet breakdown and no article results
-		  # * <tt>:multimedia</tt> - return any related multimedia links for the article (automatically added if searching with has_multimedia)
-		  # * <tt>:thumbnail</tt> - return information for a related thumbnail image (if the article has one) (automatically included if searching with :has_thumbnail)
+		  # * <tt>:multimedia</tt> - return any related multimedia links for the article
+		  # * <tt>:thumbnail</tt> - return information for a related thumbnail image (if the article has one)
 		  # * <tt>:word_count</tt> - the word_count of the article.
 			def self.search(query, params={})
 				params = params.dup
@@ -176,6 +175,7 @@ module Nytimes
 
 				add_query_params(api_params, params)
 				add_search_facets_param(api_params, params)
+				add_boolean_params(api_params, params)
 				add_fields_param(api_params, params)
 				add_facets_param(api_params, params)
 				add_rank_params(api_params, params)
@@ -307,6 +307,27 @@ module Nytimes
 				
 				unless search_facets.empty? && exclude_facets.empty?
 					out_params['query'] = ([query] + search_facets + exclude_facets).compact.join(' ')
+				end
+			end
+
+			def self.add_boolean_params(out_params, in_params)
+				bool_params = []
+				query = out_params['query']
+				
+				unless in_params[:fee].nil?
+					bool_params << "#{'-' unless in_params[:fee]}fee:Y"
+				end
+				
+				unless in_params[:has_multimedia].nil?
+					bool_params << "#{'-' unless in_params[:has_multimedia]}related_multimedia:Y"
+				end
+				
+				unless in_params[:has_thumbnail].nil?
+					bool_params << "#{'-' unless in_params[:has_thumbnail]}small_image:Y"
+				end
+				
+				unless bool_params.empty?
+					out_params['query'] = ([query] + bool_params).compact.join(' ')
 				end
 			end
 
