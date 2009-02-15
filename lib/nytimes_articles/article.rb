@@ -13,8 +13,15 @@ module Nytimes
 			ALL_FIELDS = TEXT_FIELDS + RAW_FIELDS + NUMERIC_FIELDS + BOOLEAN_FIELDS + IMAGE_FIELDS + MULTIMEDIA_FIELDS + Facet::ALL_FACETS
 
 			attr_reader *ALL_FIELDS
-			attr_reader *(Facet::ALL_FACETS.map {|f| f.gsub('_facet', '')})
+			
+			# Scalar facets
+			attr_reader :page, :column, :pub_month, :pub_year, :pub_day, :day_of_week, :desk, :date, :section_page, :source
 
+			# Facets that return multiple values
+			attr_reader :classifiers, :descriptions, :geo, :material_types, :organizations, :persons, :nytd_bylines, :nytd_descriptions, :nytd_geo, :nytd_organizations, :nytd_persons, :nytd_sections, :nytd_works_mentioned, :works_mentioned
+			alias :people :persons
+			alias :nytd_people :nytd_persons
+			
 			##
 			# Create a new Article from hash arguments. You really don't need to call this as Article instances are automatically returned from the API
 			def initialize(params={})
@@ -66,7 +73,19 @@ module Nytimes
 				# FIXME! MORE FACET PARAMS
 				# FACETS THAT RETURN ARRAYS
 				:classifiers => facet_params(params, Facet::CLASSIFIERS),
-				:geographic => facet_params(params, Facet::GEOGRAPHIC)
+				:descriptions => facet_params(params, Facet::DESCRIPTION),
+				:geo => facet_params(params, Facet::GEO),
+				:material_types => facet_params(params, Facet::MATERIAL_TYPE),
+				:organizations => facet_params(params, Facet::ORGANIZATION),
+				:persons => facet_params(params, Facet::PERSON),
+				:nytd_bylines => facet_params(params, Facet::NYTD_BYLINE),
+				:nytd_descriptions => facet_params(params, Facet::NYTD_DESCRIPTION),
+				:nytd_geo => facet_params(params, Facet::NYTD_GEO),
+				:nytd_organizations => facet_params(params, Facet::NYTD_ORGANIZATION),
+				:nytd_persons => facet_params(params, Facet::NYTD_PERSON),
+				:nytd_sections => facet_params(params, Facet::NYTD_SECTION),
+				:nytd_works_mentioned => facet_params(params, Facet::NYTD_WORKS_MENTIONED),
+				:works_mentioned => facet_params(params, Facet::WORKS_MENTIONED)
 				)
 
 				article
@@ -113,7 +132,7 @@ module Nytimes
 			# * <tt>Facet::DAY_OF_WEEK</tt> - The day of the week (e.g., Monday, Tuesday) the article was published (compare <tt>PUB_DAY</tt>, which is the numeric date rather than the day of the week) 
 			# * <tt>Facet::DESCRIPTION</tt> - Descriptive subject terms assigned by Times indexers (must be in UPPERCASE)
 			# * <tt>Facet::DESK</tt> - The Times desk that produced the story (e.g., _Business/Financial Desk_)
-			# * <tt>Facet::GEOGRAPHIC</tt> - Standardized names of geographic locations, assigned by Times indexers (must be in UPPERCASE)
+			# * <tt>Facet::GEO</tt> - Standardized names of geographic locations, assigned by Times indexers (must be in UPPERCASE)
 			# * <tt>Facet::MATERIAL_TYPE</tt> - The general article type, such as Biography, Editorial or Review
 			# * <tt>Facet::ORGANIZATION</tt> - Standardized names of people, assigned by Times indexers (must be UPPERCASE)
 			# * <tt>Facet::PAGE</tt> - The page the article appeared on (in the printed paper)
@@ -126,7 +145,7 @@ module Nytimes
 			# * <tt>Facet::WORKS_MENTIONED</tt> - Literary works mentioned in the article
 			# * <tt>Facet::NYTD_BYLINE</tt> - The article byline, formatted for NYTimes.com
 			# * <tt>Facet::NYTD_DESCRIPTION</tt> - Descriptive subject terms, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case
-			# * <tt>Facet::NYTD_GEOGRAPHIC</tt> - Standardized names of geographic locations, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case
+			# * <tt>Facet::NYTD_GEO</tt> - Standardized names of geographic locations, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case
 			# * <tt>Facet::NYTD_ORGANIZATION</tt> - Standardized names of organizations, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case
 			# * <tt>Facet::NYTD_PERSON</tt> - Standardized names of people, assigned for use on NYTimes.com (to get standardized terms, use the TimesTags API). When used in a request, values must be Mixed Case.
 			# * <tt>Facet::NYTD_SECTION</tt> - The section the article appears in (on NYTimes.com)

@@ -10,7 +10,7 @@ module Nytimes
 			DAY_OF_WEEK = 'day_of_week_facet'
 			DESCRIPTION = 'des_facet'
 			DESK = 'desk_facet'
-			GEOGRAPHIC = 'geo_facet'
+			GEO = 'geo_facet'
 			MATERIAL_TYPE = 'material_type_facet'
 			ORGANIZATION = 'org_facet'
 			PAGE = 'page_facet'
@@ -25,17 +25,17 @@ module Nytimes
 			# Facets of content formatted for nytimes.com
 			NYTD_BYLINE = 'nytd_byline'
 			NYTD_DESCRIPTION = 'nytd_des_facet'
-			NYTD_GEOGRAPHIC = 'nytd_geo_facet'
+			NYTD_GEO = 'nytd_geo_facet'
 			NYTD_ORGANIZATION = 'nytd_org_facet'
 			NYTD_PERSON = 'nytd_per_facet'
 			NYTD_SECTION = 'nytd_section_facet'
 			NYTD_WORKS_MENTIONED = 'nytd_works_mentioned_facet'
 			
 			# The best 5 facets to return
-		  DEFAULT_RETURN_FACETS = [NYTD_DESCRIPTION, NYTD_GEOGRAPHIC, NYTD_ORGANIZATION, NYTD_PERSON, NYTD_SECTION]
+		  DEFAULT_RETURN_FACETS = [NYTD_DESCRIPTION, NYTD_GEO, NYTD_ORGANIZATION, NYTD_PERSON, NYTD_SECTION]
 		
-			ALL_FACETS = [CLASSIFIERS, COLUMN, DATE, DAY_OF_WEEK, DESCRIPTION, DESK, GEOGRAPHIC, MATERIAL_TYPE, ORGANIZATION, PAGE, PERSON, PUB_DAY,
-														PUB_MONTH, PUB_YEAR, SECTION_PAGE, SOURCE, WORKS_MENTIONED, NYTD_BYLINE, NYTD_DESCRIPTION, NYTD_GEOGRAPHIC,
+			ALL_FACETS = [CLASSIFIERS, COLUMN, DATE, DAY_OF_WEEK, DESCRIPTION, DESK, GEO, MATERIAL_TYPE, ORGANIZATION, PAGE, PERSON, PUB_DAY,
+														PUB_MONTH, PUB_YEAR, SECTION_PAGE, SOURCE, WORKS_MENTIONED, NYTD_BYLINE, NYTD_DESCRIPTION, NYTD_GEO,
 														NYTD_ORGANIZATION, NYTD_PERSON, NYTD_SECTION, NYTD_WORKS_MENTIONED]
 			
 			def initialize(facet_type, term, count)
