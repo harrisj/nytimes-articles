@@ -195,8 +195,8 @@ module Nytimes
 				add_query_params(api_params, params)
 				add_search_facets_param(api_params, params)
 				add_boolean_params(api_params, params)
-				add_fields_param(api_params, params)
 				add_facets_param(api_params, params)
+				add_fields_param(api_params, params)
 				add_rank_params(api_params, params)
 				add_date_params(api_params, params)
 				add_offset_params(api_params, params)
@@ -249,6 +249,11 @@ module Nytimes
 					# do nothing
 				when :all
 					out_params['fields'] = ALL_FIELDS.join(',')
+				when :none
+					out_params['fields'] = ' '
+					unless out_params['facets']
+						out_params['facets'] = Facet::DEFAULT_RETURN_FACETS.join(',')
+					end
 				when String, Symbol
 					out_params['fields'] = in_params[:fields].to_s
 				when Array

@@ -190,9 +190,20 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 			
 			context "for the :none argument" do
-				should "request a blank space for the fields argument"
-				should "request the standard :facets if no :facets have been explicitly provided"
-				should "request the given :facets field if provided"
+				should "request a blank space for the fields argument" do
+					Article.expects(:invoke).with(has_entry('fields', ' '))
+					Article.search "FOO BAR", :fields => :none
+				end
+				
+				should "request the standard :facets if no :facets have been explicitly provided" do
+					Article.expects(:invoke).with(has_entry('facets', Facet::DEFAULT_RETURN_FACETS.join(',')))
+					Article.search "FOO BAR", :fields => :none	
+				end
+				
+				should "request the given :facets field if provided" do
+					Article.expects(:invoke).with(has_entry('facets', "#{Facet::GEO}"))
+					Article.search "FOO BAR", :fields => :none, :facets => Facet::GEO
+				end
 			end
 			
 			context ":thumbnail" do
