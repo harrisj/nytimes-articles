@@ -10,9 +10,10 @@ module Nytimes
 			IMAGE_FIELDS = %w(small_image small_image_url small_image_height small_image_width)
 			MULTIMEDIA_FIELDS = %w(multimedia related_multimedia)
 
-			ALL_FIELDS = TEXT_FIELDS + RAW_FIELDS + NUMERIC_FIELDS + BOOLEAN_FIELDS + IMAGE_FIELDS + MULTIMEDIA_FIELDS + Facet::ALL_FACETS
+			ALL_FIELDS = TEXT_FIELDS + RAW_FIELDS + NUMERIC_FIELDS + BOOLEAN_FIELDS + MULTIMEDIA_FIELDS + Facet::ALL_FACETS + IMAGE_FIELDS
 
 			attr_reader *ALL_FIELDS
+			attr_reader :thumbnail
 			
 			# Scalar facets
 			attr_reader :page, :column, :pub_month, :pub_year, :pub_day, :day_of_week, :desk, :date, :section_page, :source
@@ -53,7 +54,7 @@ module Nytimes
 				:nytd_title => text_field(params['nytd_title']),
 				:nytd_lead_paragraph => text_field(params['nytd_lead_paragraph']),
 				:related_multimedia => nil, # FIXME
-				:image => nil, # FIXME
+				:thumbnail => Thumbnail.init_from_api(params),
 				:title => text_field(params['title']),
 				:url => params['url'],
 				:word_count => integer_field(params['word_count']),
@@ -243,6 +244,15 @@ module Nytimes
 				end
 			end
 
+			def self.field_param(name)
+				case name.to_s
+				when 'thumbnail'
+					IMAGE_FIELDS.join(',')
+				else
+					name.to_s
+				end
+			end
+
 			def self.add_fields_param(out_params, in_params)
 				case in_params[:fields]
 				when nil
@@ -255,9 +265,9 @@ module Nytimes
 						out_params['facets'] = Facet::DEFAULT_RETURN_FACETS.join(',')
 					end
 				when String, Symbol
-					out_params['fields'] = in_params[:fields].to_s
+					out_params['fields'] = field_param(in_params[:fields])
 				when Array
-					out_params['fields'] = in_params[:fields].map {|f| f.to_s}.join(',')
+					out_params['fields'] = in_params[:fields].map {|f| field_param(f)}.join(',')
 				else
 					raise ArgumentError, "Fields must either be :all, a single field name, or an array of field names (either strings or symbols)"
 				end	

@@ -207,9 +207,15 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 			
 			context ":thumbnail" do
-				should "accept the symbol version of the argument"
-				should "accept the string version of the argument"
-				should "request all the thumbnail image fields from the API"
+				should "accept the symbol version of the argument" do
+					Article.expects(:invoke).with(has_entry('fields', Article::IMAGE_FIELDS.join(',')))
+					Article.search "FOO BAR", :fields => :thumbnail
+				end
+				
+				should "accept the string version of the argument" do
+					Article.expects(:invoke).with(has_entry('fields', Article::IMAGE_FIELDS.join(',')))
+					Article.search "FOO BAR", :fields => 'thumbnail'
+				end				
 			end
 			
 			context ":multimedia" do
@@ -458,6 +464,23 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			should "return nil if the value is not provided in the hash" do
 				article = Article.init_from_api({"foo" => "bar"})
 				assert_nil article.page
+			end
+		end
+		
+		context "@thumbnail" do
+			should "assign nil to thumbnail otherwise" do
+				article = Article.init_from_api({"foo" => "bar"})
+				assert_nil article.thumbnail
+			end
+
+			should "create a thumbnail object if a small_image_url is part of the return hash" do
+				article = Article.init_from_api(ARTICLE_API_HASH2)
+				thumbnail = article.thumbnail
+				assert_not_nil thumbnail
+				assert_kind_of Thumbnail, thumbnail
+				assert_equal ARTICLE_API_HASH2['small_image_url'], thumbnail.url
+				assert_equal ARTICLE_API_HASH2['small_image_width'].to_i, thumbnail.width
+				assert_equal ARTICLE_API_HASH2['small_image_height'].to_i, thumbnail.height
 			end
 		end
 	end
