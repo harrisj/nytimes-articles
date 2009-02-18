@@ -1,7 +1,24 @@
 module Nytimes
 	module Articles
+		
+		##
+		# This class represents a Facet used in the ArticleSearch API. Facets can be used to both search for matching articles (see Article#search) and
+		# are also returned as article and search metadata. Facets are made up of 3 parts:
+		# * <tt>facet_type</tt> - a string; see Article#search for a list of facet types
+		# * <tt>term</tt> - a string as well
+		# * <tt>count</tt> - Facets returned as search metadata (via the <tt>:facets</tt> parameter to Article#search) also include a non-nil count of matching articles for that facet
 		class Facet
-			attr_reader :term, :count, :facet_type
+			##
+			# The term for the facet
+			attr_reader :term
+			
+			##
+			# The number of times this facet has appeared in the search results (note: this only applies for facets returned in the facets header on an Article#search)
+			attr_reader :count
+			
+			##
+			# The facet type
+			attr_reader :facet_type
 			
 			# Facet name constants
 			CLASSIFIERS = 'classifiers_facet'
@@ -31,23 +48,24 @@ module Nytimes
 			NYTD_SECTION = 'nytd_section_facet'
 			NYTD_WORKS_MENTIONED = 'nytd_works_mentioned_facet'
 			
-			# The best 5 facets to return
-		  DEFAULT_RETURN_FACETS = [NYTD_DESCRIPTION, NYTD_GEO, NYTD_ORGANIZATION, NYTD_PERSON, NYTD_SECTION]
+			# The default 5 facets to return
+		  DEFAULT_RETURN_FACETS = [DESCRIPTION, GEO, ORGANIZATION, PERSON, DESK]
 		
 			ALL_FACETS = [CLASSIFIERS, COLUMN, DATE, DAY_OF_WEEK, DESCRIPTION, DESK, GEO, MATERIAL_TYPE, ORGANIZATION, PAGE, PERSON, PUB_DAY,
 														PUB_MONTH, PUB_YEAR, SECTION_PAGE, SOURCE, WORKS_MENTIONED, NYTD_BYLINE, NYTD_DESCRIPTION, NYTD_GEO,
 														NYTD_ORGANIZATION, NYTD_PERSON, NYTD_SECTION, NYTD_WORKS_MENTIONED]
 			
+			##
+			# Initializes the facet. There is seldom a reason for you to call this.
 			def initialize(facet_type, term, count)
 				@facet_type = facet_type
 				@term = term
 				@count = count
 			end
 			
-			# def self.init_from_api(type, hash)
-			# 	self.new(type, hash['term'], hash['count'].to_i)
-			# end
-			
+			##
+			# Initializes a selection of Facet objects returned from the API. Used for marshaling Facets in articles and metadata from search results
+			# (Note: some facets are returned as scalar values)
 			def self.init_from_api(api_hash)
 				return nil if api_hash.nil?
 				

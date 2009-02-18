@@ -2,6 +2,10 @@ require 'rubygems'
 
 module Nytimes
 	module Articles
+		##
+		# The Article class represents a single article returned from the New York Times Article Search API. Note that an article can have many attributes
+		# but these are not necessarily populated unless you explicitly request them in the reply from the server via the <tt>:fields</tt> parameter to 
+		# search (or use <tt>:fields => :all</tt>). 
 		class Article < Base
 			RAW_FIELDS = %w(url)
 			TEXT_FIELDS = %w(abstract author body byline lead_paragraph nytd_lead_paragraph nytd_title title)
@@ -13,6 +17,8 @@ module Nytimes
 			ALL_FIELDS = TEXT_FIELDS + RAW_FIELDS + NUMERIC_FIELDS + BOOLEAN_FIELDS + MULTIMEDIA_FIELDS + Facet::ALL_FACETS + IMAGE_FIELDS
 
 			attr_reader *ALL_FIELDS
+			
+			# special additional objects
 			attr_reader :thumbnail
 			
 			# Scalar facets

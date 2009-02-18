@@ -1,5 +1,8 @@
 module Nytimes
 	module Articles
+		##
+		# If requested in <tt>:fields</tt> for an article search, some articles are returned with a matching thumbnail image. The several thumbnail
+		# fields are collected together into a single Thumbnail instance for your convenience. 
 		class Thumbnail
 			attr_reader :url, :width, :height
 			
