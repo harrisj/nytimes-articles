@@ -159,8 +159,8 @@ module Nytimes
 			# * <tt>Facet::NYTD_WORKS_MENTIONED</tt> - Literary works mentioned (titles formatted for use on NYTimes.com)
 			#
 			# The following two search fields are used for facet searching:
-			# * <tt>:search_facets</tt> - takes a single value or array of facets to search. Facets can either be specified as array pairs (like <tt>[Facet::GEOGRAPHIC, 'CALIFORNIA']</tt>) or facets returned from a previous search can be passed directly. A single string can be passed as well if you have hand-crafted string.
-			# * <tt>:exclude_facets</tt> - similar to <tt>:search_facets</tt> but is used to specify a list of facets to exclude.
+			# * <tt>:only_facets</tt> - takes a single value or array of facets to search. Facets can either be specified as array pairs (like <tt>[Facet::GEOGRAPHIC, 'CALIFORNIA']</tt>) or facets returned from a previous search can be passed directly. A single string can be passed as well if you have hand-crafted string.
+			# * <tt>:except_facets</tt> - similar to <tt>:only_facets</tt> but is used to specify a list of facets to exclude.
 			#
 			# == OTHER SEARCH FIELDS
 			# * <tt>:fee</tt> - to be implemented
@@ -200,7 +200,7 @@ module Nytimes
 				api_params = {}
 
 				add_query_params(api_params, params)
-				add_search_facets_param(api_params, params)
+				add_facet_conditions_params(api_params, params)
 				add_boolean_params(api_params, params)
 				add_facets_param(api_params, params)
 				add_fields_param(api_params, params)
@@ -304,15 +304,15 @@ module Nytimes
 			end
 
 			def self.parse_facet_params(facets, exclude = false)
-				search_facets = []
+				facet_args = []
 						
 				case facets
 				when nil
 					# do nothing
 				when String
-					search_facets = [facets]
+					facet_args = [facets]
 				when Facet
-					search_facets = [facet_argument(facets.facet_type, facets.term, exclude)]
+					facet_args = [facet_argument(facets.facet_type, facets.term, exclude)]
 				when Array
 					unless facets.all? {|f| f.is_a? Facet }
 						raise ArgumentError, "Only Facet instances can be passed in as an array; use Hash for Facet::Name => values input"
@@ -328,22 +328,22 @@ module Nytimes
 					end
 					
 					facet_hash.each_pair do |k,v|
-						search_facets << facet_argument(k, v, exclude)
+						facet_args << facet_argument(k, v, exclude)
 					end
 				when Hash
 					facets.each_pair do |k,v|
-						search_facets << facet_argument(k, v, exclude)
+						facet_args << facet_argument(k, v, exclude)
 					end
 				end
 				
-				search_facets
+				facet_args
 			end
 			
-			def self.add_search_facets_param(out_params, in_params)
+			def self.add_facet_conditions_params(out_params, in_params)
 				query = out_params['query']
 
-				search_facets = parse_facet_params(in_params[:search_facets])
-				exclude_facets = parse_facet_params(in_params[:exclude_facets], true)
+				search_facets = parse_facet_params(in_params[:only_facets])
+				exclude_facets = parse_facet_params(in_params[:except_facets], true)
 				
 				unless search_facets.empty? && exclude_facets.empty?
 					out_params['query'] = ([query] + search_facets + exclude_facets).compact.join(' ')

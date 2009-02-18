@@ -81,26 +81,26 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 		end
 		
-		context "search_facets" do
+		context "only_facets" do
 			should "accept a String" do
 				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA]"))
-				Article.search :search_facets => "#{Facet::GEO}:[CALIFORNIA]"
+				Article.search :only_facets => "#{Facet::GEO}:[CALIFORNIA]"
 			end
 			
 			should "accept a single hash value Facet string to a term" do
 				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA]"))
-				Article.search :search_facets => {Facet::GEO => 'CALIFORNIA'}
+				Article.search :only_facets => {Facet::GEO => 'CALIFORNIA'}
 			end
 			
 			should "accept an Facet string hashed to an array terms" do
 				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA,GREAT BRITAIN]"))
-				Article.search :search_facets => {Facet::GEO => ['CALIFORNIA', 'GREAT BRITAIN']}
+				Article.search :only_facets => {Facet::GEO => ['CALIFORNIA', 'GREAT BRITAIN']}
 			end
 			
 			should "accept a single Facet object" do
 				f = Facet.new(Facet::GEO, 'CALIFORNIA', 2394)
 				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA]"))
-				Article.search :search_facets => f
+				Article.search :only_facets => f
 			end
 			
 			should "accept an array of Facet objects" do
@@ -108,7 +108,7 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				f2 = Facet.new(Facet::NYTD_ORGANIZATION, 'University Of California', 12)
 				
 				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA] #{Facet::NYTD_ORGANIZATION}:[University Of California]"))
-				Article.search :search_facets => [f, f2]
+				Article.search :only_facets => [f, f2]
 			end
 			
 			should "merge multiple Facets objects in the array of the same type into one array" do
@@ -116,35 +116,35 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				f2 = Facet.new(Facet::GEO, 'IOWA', 12)
 				
 				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA,IOWA]"))
-				Article.search :search_facets => [f, f2]
+				Article.search :only_facets => [f, f2]
 			end
 			
 			should "not stomp on an existing query string" do
 				Article.expects(:invoke).with(has_entry("query", "ice cream #{Facet::GEO}:[CALIFORNIA]"))
-				Article.search "ice cream", :search_facets => {Facet::GEO => "CALIFORNIA"}
+				Article.search "ice cream", :only_facets => {Facet::GEO => "CALIFORNIA"}
 			end
 		end
 
-		context "exclude_facets" do
+		context "except_facets" do
 			should "accept a String" do
 				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA]"))
-				Article.search :exclude_facets => "-#{Facet::GEO}:[CALIFORNIA]"
+				Article.search :except_facets => "-#{Facet::GEO}:[CALIFORNIA]"
 			end
 			
 			should "accept a single hash value Facet string to a term" do
 				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA]"))
-				Article.search :exclude_facets => {Facet::GEO => 'CALIFORNIA'}
+				Article.search :except_facets => {Facet::GEO => 'CALIFORNIA'}
 			end
 			
 			should "accept an Facet string hashed to an array terms" do
 				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA,GREAT BRITAIN]"))
-				Article.search :exclude_facets => {Facet::GEO => ['CALIFORNIA', 'GREAT BRITAIN']}
+				Article.search :except_facets => {Facet::GEO => ['CALIFORNIA', 'GREAT BRITAIN']}
 			end
 			
 			should "accept a single Facet object" do
 				f = Facet.new(Facet::GEO, 'CALIFORNIA', 2394)
 				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA]"))
-				Article.search :exclude_facets => f
+				Article.search :except_facets => f
 			end
 			
 			should "accept an array of Facet objects" do
@@ -152,7 +152,7 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				f2 = Facet.new(Facet::NYTD_ORGANIZATION, 'University Of California', 12)
 				
 				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA] -#{Facet::NYTD_ORGANIZATION}:[University Of California]"))
-				Article.search :exclude_facets => [f, f2]
+				Article.search :except_facets => [f, f2]
 			end
 			
 			should "merge multiple Facets objects in the array of the same type into one array" do
@@ -160,12 +160,12 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				f2 = Facet.new(Facet::GEO, 'IOWA', 12)
 				
 				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA,IOWA]"))
-				Article.search :exclude_facets => [f, f2]
+				Article.search :except_facets => [f, f2]
 			end
 			
 			should "not stomp on an existing query string" do
 				Article.expects(:invoke).with(has_entry("query", "ice cream -#{Facet::GEO}:[CALIFORNIA]"))
-				Article.search "ice cream", :exclude_facets => {Facet::GEO => "CALIFORNIA"}
+				Article.search "ice cream", :except_facets => {Facet::GEO => "CALIFORNIA"}
 			end
 		end
 
