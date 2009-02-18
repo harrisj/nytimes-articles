@@ -44,66 +44,66 @@ class TestNytimes::TestArticles::TestFacet < Test::Unit::TestCase
 		end
 	end
 	
-	context "Facet.symbol_to_api_name" do
+	context "Facet.symbol_name" do
 		[:geo, :geography].each do |sym|
 			should "return Facet::GEO for #{sym}" do
-				assert_equal Facet::GEO, Facet.symbol_to_api_name(sym)
+				assert_equal Facet::GEO, Facet.symbol_name(sym)
 			end
 		end
 
 		[:org, :orgs, :organization, :organizations].each do |sym|
 			should "return Facet::ORGANIZATION for #{sym}" do
-				assert_equal Facet::ORGANIZATION, Facet.symbol_to_api_name(sym)
+				assert_equal Facet::ORGANIZATION, Facet.symbol_name(sym)
 			end
 		end
 		
 		[:people, :person, :persons].each do |sym|
 			should "return Facet::PERSON for #{sym}" do
-				assert_equal Facet::PERSON, Facet.symbol_to_api_name(sym)
+				assert_equal Facet::PERSON, Facet.symbol_name(sym)
 			end
 		end
 		
 		[:nytd_geo, :nytd_geography].each do |sym|
 			should "return Facet::NYTD_GEO for #{sym}" do
-				assert_equal Facet::NYTD_GEO, Facet.symbol_to_api_name(sym)
+				assert_equal Facet::NYTD_GEO, Facet.symbol_name(sym)
 			end
 		end
 
 		[:nytd_org, :nytd_orgs, :nytd_organization, :nytd_organizations].each do |sym|
 			should "return Facet::NYTD_ORGANIZATION for #{sym}" do
-				assert_equal Facet::NYTD_ORGANIZATION, Facet.symbol_to_api_name(sym)
+				assert_equal Facet::NYTD_ORGANIZATION, Facet.symbol_name(sym)
 			end
 		end
 		
 		[:nytd_people, :nytd_person, :nytd_persons].each do |sym|
 			should "return Facet::NYTD_PERSON for #{sym}" do
-				assert_equal Facet::NYTD_PERSON, Facet.symbol_to_api_name(sym)
+				assert_equal Facet::NYTD_PERSON, Facet.symbol_name(sym)
 			end
 		end
 		
 		should "look for a matching constant and use that value" do
-			assert_equal Facet::SOURCE, Facet.symbol_to_api_name(:source)
+			assert_equal Facet::SOURCE, Facet.symbol_name(:source)
 		end
 		
 		should "singularize the symbol when looking for a constant if no match for the plural form" do
-			assert_equal Facet::PAGE, Facet.symbol_to_api_name(:pages)
+			assert_equal Facet::PAGE, Facet.symbol_name(:pages)
 		end
 		
 		should "return the string passed in if passed a string" do
-			assert_equal "FOOBAR", Facet.symbol_to_api_name('FOOBAR')
+			assert_equal "FOOBAR", Facet.symbol_name('FOOBAR')
 		end
 		
 		should "return the facet's facet_type if passed a Facet object" do
 			f = Facet.new(Facet::ORGANIZATION, 'THE NEW YORK TIMES', nil)
-			assert_equal Facet::ORGANIZATION, Facet.symbol_to_api_name(f)
+			assert_equal Facet::ORGANIZATION, Facet.symbol_name(f)
 		end
 		
 		should "raise an ArgumentError if not passed a symbol" do
-			assert_raise(ArgumentError) { Facet.symbol_to_api_name(23) }
+			assert_raise(ArgumentError) { Facet.symbol_name(23) }
 		end
 		
 		should "raise an ArgumentError if unable to find a matching Facet constant" do
-			assert_raise(ArgumentError) { Facet.symbol_to_api_name(:clown) }
+			assert_raise(ArgumentError) { Facet.symbol_name(:clown) }
 		end
 	end
 end

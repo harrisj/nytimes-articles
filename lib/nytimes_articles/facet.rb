@@ -65,7 +65,7 @@ module Nytimes
 			
 			##
 			# Takes a symbol name and subs it to a string constant
-			def self.symbol_to_api_name(facet)
+			def self.symbol_name(facet)
 				case facet
 				when String
 					return facet
