@@ -246,7 +246,7 @@ module Nytimes
 
 			def self.add_facets_param(out_params, in_params)
 				if in_params[:facets]
-					out_params['facets'] = in_params[:facets].to_a.join(',')
+					out_params['facets'] = in_params[:facets].to_a.map {|f| Facet.symbol_to_api_name(f)}.join(',')
 				end
 			end
 
@@ -298,6 +298,10 @@ module Nytimes
 			def self.facet_argument(name, value, exclude = false)
 				unless value.is_a? Array
 					value = [value]
+				end
+				
+				if name.is_a? Symbol
+					name = Facet.symbol_to_api_name(name)
 				end
 				
 				"#{'-' if exclude}#{name}:[#{value.join(',')}]"

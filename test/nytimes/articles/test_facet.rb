@@ -89,6 +89,15 @@ class TestNytimes::TestArticles::TestFacet < Test::Unit::TestCase
 			assert_equal Facet::PAGE, Facet.symbol_to_api_name(:pages)
 		end
 		
+		should "return the string passed in if passed a string" do
+			assert_equal "FOOBAR", Facet.symbol_to_api_name('FOOBAR')
+		end
+		
+		should "return the facet's facet_type if passed a Facet object" do
+			f = Facet.new(Facet::ORGANIZATION, 'THE NEW YORK TIMES', nil)
+			assert_equal Facet::ORGANIZATION, Facet.symbol_to_api_name(f)
+		end
+		
 		should "raise an ArgumentError if not passed a symbol" do
 			assert_raise(ArgumentError) { Facet.symbol_to_api_name(23) }
 		end

@@ -66,8 +66,15 @@ module Nytimes
 			##
 			# Takes a symbol name and subs it to a string constant
 			def self.symbol_to_api_name(facet)
-				unless facet.is_a? Symbol
-					raise ArgumentError, "Only accepts symbol arguments"
+				case facet
+				when String
+					return facet
+				when Facet
+					return facet.facet_type
+				when Symbol
+					# fall through
+				else
+					raise ArgumentError, "Unsupported type to Facet#symbol_to_api_name"
 				end
 				
 				case facet
