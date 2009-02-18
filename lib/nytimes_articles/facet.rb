@@ -64,6 +64,39 @@ module Nytimes
 			end
 			
 			##
+			# Takes a symbol name and subs it to a string constant
+			def self.symbol_to_api_name(facet)
+				unless facet.is_a? Symbol
+					raise ArgumentError, "Only accepts symbol arguments"
+				end
+				
+				case facet
+				when :geography
+					GEO
+				when :org, :orgs
+					ORGANIZATION
+				when :people
+					PERSON
+				when :nytd_geography
+					NYTD_GEO
+				when :nytd_org, :nytd_orgs
+					NYTD_ORGANIZATION
+				when :nytd_people
+					NYTD_PERSON
+				else
+					name = facet.to_s.upcase
+					
+					if const_defined?(name)
+						const_get(name)
+					elsif name =~ /S$/ && const_defined?(name.gsub(/S$/, ''))
+						const_get(name.gsub(/S$/, ''))
+					else
+						raise ArgumentError, "Unable to find a matching facet key for symbol :#{facet}"
+					end
+				end
+			end
+			
+			##
 			# Initializes a selection of Facet objects returned from the API. Used for marshaling Facets in articles and metadata from search results
 			# (Note: some facets are returned as scalar values)
 			def self.init_from_api(api_hash)
