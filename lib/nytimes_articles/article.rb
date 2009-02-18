@@ -158,16 +158,18 @@ module Nytimes
 			# * <tt>Facet::NYTD_SECTION</tt> - The section the article appears in (on NYTimes.com)
 			# * <tt>Facet::NYTD_WORKS_MENTIONED</tt> - Literary works mentioned (titles formatted for use on NYTimes.com)
 			#
+			# Note that for your convenience you can also search with symbol versions of the constants (<tt>:geo => ['MANHATTAN']</tt>). Even pluralization is supported. To get the string API version of the facet use Facet#symbol_name
+			#
 			# The following two search fields are used for facet searching:
 			# * <tt>:only_facets</tt> - takes a single value or array of facets to search. Facets can either be specified as array pairs (like <tt>[Facet::GEOGRAPHIC, 'CALIFORNIA']</tt>) or facets returned from a previous search can be passed directly. A single string can be passed as well if you have hand-crafted string.
 			# * <tt>:except_facets</tt> - similar to <tt>:only_facets</tt> but is used to specify a list of facets to exclude.
 			#
 			# == OTHER SEARCH FIELDS
-			# * <tt>:fee</tt> - to be implemented
+			# * <tt>:fee</tt> - if set to true, only returns articles that must be purchased. If false, returns only free articles. If not specified, returns all articles
 			# * <tt>:begin_date</tt>, <tt>:end_date</tt> - the parameters are used to specify a start and end date for search results. BOTH of these must be provided or the API will return an error. Accepts either a Time/Date argument or a string of the format YYYYMMDD. For convenience the following alternative methods are provided
 			# * <tt>:before</tt> - an alternative to :end_date. Automatically adds a :before_date of sometime in 1980 if no :since argument is also provided; to be implemented
 			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided; to be implemented.
-			# * <tt>:has_thumbnail</tt> - to be implemented
+			# * <tt>:has_thumbnail</tt> - returns only articles that have thumbnail images associated. Note that to see the thumbnails, you must specify either <tt>:thumbnail</tt> or <tt>:all</tt> in the <tt>:fields</tt> argument).
 			# * <tt>:has_multimedia</tt> - to be implemented
 			#
 			# == FACET SUMMARIES
