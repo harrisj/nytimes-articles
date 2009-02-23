@@ -55,18 +55,84 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			should "raise an ArgumentError if the end_date is NOT a string and does not respond_to strftime" do
 				assert_raise(ArgumentError) { Article.search :end_date => 23 }
 			end
-
-			context ":before" do
-				should "add a begin_date in 1980 if no :since or :begin_date argument is provided"
-				should "not add a begin_date is there is a :since argument"
-				should "not add a begin_date if there is a :begin_date argument already"
-			end
 			
-			context ":since" do
-				should "add an end_date of now if no :before or :end_date argument is provided"
-				should "not add an end_date is there is a :before argument"
-				should "not add an end_date if there is a :end_date argument already"
+			context ":before" do
+				should "send the :before value through as a end_date" do
+					t = Time.now
+					Article.expects(:invoke).with(has_entry('end_date', t.strftime("%Y%m%d")))
+					Article.search :before => t
+				end
+				
+				should "not send through :before as an argument to the API" do
+					t = Time.now
+					Article.expects(:invoke).with(Not(has_key('before')))
+					Article.search :before => t
+				end
+				
+				should "raise an ArgumentError if the before_date is NOT a string and does not respond_to strftime" do
+					assert_raise(ArgumentError) { Article.search :before => 23 }
+				end
+				
+				should "add a begin_date in 1980 if no :since or :begin_date argument is provided" do
+					Article.expects(:invoke).with(has_entry('begin_date', Article::EARLIEST_BEGIN_DATE))
+					Article.search :before => Time.now
+				end
+				
+				should "not automatically add a begin_date is there is a :since argument" do
+					since = Time.now - 12000
+					Article.expects(:invoke).with(has_entry('begin_date', since.strftime("%Y%m%d")))
+					Article.search :before => Time.now, :since => since
+				end
+				
+				should "not automatically add a begin_date if there is a :begin_date argument already" do
+					since = Time.now - 12000
+					Article.expects(:invoke).with(has_entry('begin_date', since.strftime("%Y%m%d")))
+					Article.search :before => Time.now, :begin_date => since
+				end
+				
+				should "raise an ArgumentError if there is also an :end_date argument" do
+					assert_raise(ArgumentError) { Article.search :before => Time.now, :end_date => Time.now }
+				end
 			end
+
+			context ":since" do
+				should "send the :since value through as a begin_date" do
+					t = Time.now - 1200
+					Article.expects(:invoke).with(has_entry('begin_date', t.strftime("%Y%m%d")))
+					Article.search :since => t
+				end
+				
+				should "not send through :since as an argument to the API" do
+					t = Time.now
+					Article.expects(:invoke).with(Not(has_key('since')))
+					Article.search :since => t
+				end
+				
+				should "raise an ArgumentError if the before_date is NOT a string and does not respond_to strftime" do
+					assert_raise(ArgumentError) { Article.search :since => 23 }
+				end
+				
+				should "add a end_date of today if no :before or :end_date argument is provided" do
+					Article.expects(:invoke).with(has_entry('end_date', Time.now.strftime("%Y%m%d")))
+					Article.search :since => Time.now
+				end
+				
+				should "not automatically add a end_date is there is a :before argument" do
+					since = '19990101'
+					Article.expects(:invoke).with(has_entry('end_date', '20030101'))
+					Article.search :before => '20030101', :since => since
+				end
+				
+				should "not automatically add a end_date if there is a :end_date argument already" do
+					since = '19990101'
+					Article.expects(:invoke).with(has_entry('end_date', '20030101'))
+					Article.search :end_date => '20030101', :since => since
+				end
+				
+				should "raise an ArgumentError if there is also an :begin_date argument" do
+					assert_raise(ArgumentError) { Article.search :since => Time.now, :begin_date => Time.now }
+				end
+			end			
 		end
 
 		context "facets" do

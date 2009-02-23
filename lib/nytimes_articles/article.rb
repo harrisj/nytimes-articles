@@ -16,6 +16,8 @@ module Nytimes
 
 			ALL_FIELDS = TEXT_FIELDS + RAW_FIELDS + NUMERIC_FIELDS + BOOLEAN_FIELDS + MULTIMEDIA_FIELDS + Facet::ALL_FACETS + IMAGE_FIELDS
 
+			EARLIEST_BEGIN_DATE = '19800101'
+			
 			attr_reader *ALL_FIELDS
 			
 			# special additional objects
@@ -164,11 +166,13 @@ module Nytimes
 			# * <tt>:only_facets</tt> - takes a single value or array of facets to search. Facets can either be specified as array pairs (like <tt>[Facet::GEOGRAPHIC, 'CALIFORNIA']</tt>) or facets returned from a previous search can be passed directly. A single string can be passed as well if you have hand-crafted string.
 			# * <tt>:except_facets</tt> - similar to <tt>:only_facets</tt> but is used to specify a list of facets to exclude.
 			#
+			# == TIME SEARCHES
+			# * <tt>:begin_date</tt>, <tt>:end_date</tt> - the parameters are used to specify a start and end date for search results. BOTH of these must be provided or the API will return an error. Accepts either a Time/Date argument or a string of the format YYYYMMDD. For convenience the following alternative methods are provided
+			# * <tt>:before</tt> - an alternative to :end_date. Automatically adds a :before_date of sometime in 1980 if no :since argument is also provided.
+			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided.
+			#
 			# == OTHER SEARCH FIELDS
 			# * <tt>:fee</tt> - if set to true, only returns articles that must be purchased. If false, returns only free articles. If not specified, returns all articles
-			# * <tt>:begin_date</tt>, <tt>:end_date</tt> - the parameters are used to specify a start and end date for search results. BOTH of these must be provided or the API will return an error. Accepts either a Time/Date argument or a string of the format YYYYMMDD. For convenience the following alternative methods are provided
-			# * <tt>:before</tt> - an alternative to :end_date. Automatically adds a :before_date of sometime in 1980 if no :since argument is also provided; to be implemented
-			# * <tt>:since</tt> - An alternative to :begin_date. Automatically adds an :end_date of Time.now if no :before argument is provided; to be implemented.
 			# * <tt>:has_thumbnail</tt> - returns only articles that have thumbnail images associated. Note that to see the thumbnails, you must specify either <tt>:thumbnail</tt> or <tt>:all</tt> in the <tt>:fields</tt> argument).
 			# * <tt>:has_multimedia</tt> - to be implemented
 			#
@@ -394,6 +398,30 @@ module Nytimes
 
 				if in_params[:end_date]
 					out_params['end_date'] = date_argument(:end_date, in_params[:end_date])
+				end
+				
+				if in_params[:since]
+					if in_params[:begin_date]
+						raise ArgumentError, "You can't specify both :begin_date and :since as arguments"
+					end
+					
+					out_params['begin_date'] = date_argument(:since, in_params[:since])
+				end
+				
+				if in_params[:before]
+					if in_params[:end_date]
+						raise ArgumentError, "You can't specify both :end_date and :before as arguments"
+					end
+					
+					out_params['end_date'] = date_argument(:before, in_params[:before])
+				end
+				
+				if in_params[:before] && out_params['begin_date'].nil?
+					out_params['begin_date'] = EARLIEST_BEGIN_DATE
+				end
+				
+				if in_params[:since] && out_params['end_date'].nil?
+					out_params['end_date'] = date_argument(:end_date, Time.now)
 				end
 			end
 
