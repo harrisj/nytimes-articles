@@ -11,14 +11,7 @@ module Nytimes
 			API_BASE = "/svc/search/#{API_VERSION}/#{API_NAME}"
 
 			@@api_key = nil
-			@@copyright = nil
 			@@debug = false
-
-			##
-			# The copyright footer to be placed at the bottom of any data from the New York Times. Note this is only set after an API call.
-			def self.copyright
-				@@copyright
-			end
 
 			##
 			# Set the API key used for operations. This needs to be called before any requests against the API. To obtain an API key, go to http://developer.nytimes.com/
@@ -81,8 +74,6 @@ module Nytimes
 					#case parsed_reply['status']
 					# FIXME
 					#end
-
-					@@copyright = parsed_reply['copyright']
 
 					parsed_reply
 				rescue OpenURI::HTTPError => e
