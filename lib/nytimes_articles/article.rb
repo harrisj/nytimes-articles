@@ -302,15 +302,11 @@ module Nytimes
 			end
 			
 			def self.facet_argument(name, value, exclude = false)
-				unless value.is_a? Array
-					value = [value]
-				end
-				
 				if name.is_a? Symbol
 					name = Facet.symbol_name(name)
 				end
 				
-				"#{'-' if exclude}#{name}:[#{value.join(',')}]"
+				"#{'-' if exclude}#{name}:[#{value}]"
 			end
 
 			def self.parse_facet_params(facets, exclude = false)
@@ -338,11 +334,19 @@ module Nytimes
 					end
 					
 					facet_hash.each_pair do |k,v|
-						facet_args << facet_argument(k, v, exclude)
+						if v.is_a? Array
+							facet_args += v.map {|el| facet_argument(k, el, exclude)}
+						else
+							facet_args << facet_argument(k, v, exclude)
+						end
 					end
 				when Hash
 					facets.each_pair do |k,v|
-						facet_args << facet_argument(k, v, exclude)
+						if v.is_a? Array
+							facet_args += v.map {|el| facet_argument(k, el, exclude)}
+						else
+							facet_args << facet_argument(k, v, exclude)
+						end
 					end
 				end
 				

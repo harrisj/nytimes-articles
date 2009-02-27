@@ -159,7 +159,7 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 			
 			should "accept an Facet string hashed to an array terms" do
-				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA,GREAT BRITAIN]"))
+				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA] #{Facet::GEO}:[GREAT BRITAIN]"))
 				Article.search :only_facets => {Facet::GEO => ['CALIFORNIA', 'GREAT BRITAIN']}
 			end
 			
@@ -181,7 +181,7 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				f = Facet.new(Facet::GEO, 'CALIFORNIA', 2394)
 				f2 = Facet.new(Facet::GEO, 'IOWA', 12)
 				
-				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA,IOWA]"))
+				Article.expects(:invoke).with(has_entry("query", "#{Facet::GEO}:[CALIFORNIA] #{Facet::GEO}:[IOWA]"))
 				Article.search :only_facets => [f, f2]
 			end
 			
@@ -203,7 +203,7 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 			end
 			
 			should "accept an Facet string hashed to an array terms" do
-				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA,GREAT BRITAIN]"))
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA] -#{Facet::GEO}:[GREAT BRITAIN]"))
 				Article.search :except_facets => {Facet::GEO => ['CALIFORNIA', 'GREAT BRITAIN']}
 			end
 			
@@ -225,7 +225,7 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				f = Facet.new(Facet::GEO, 'CALIFORNIA', 2394)
 				f2 = Facet.new(Facet::GEO, 'IOWA', 12)
 				
-				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA,IOWA]"))
+				Article.expects(:invoke).with(has_entry("query", "-#{Facet::GEO}:[CALIFORNIA] -#{Facet::GEO}:[IOWA]"))
 				Article.search :except_facets => [f, f2]
 			end
 			
