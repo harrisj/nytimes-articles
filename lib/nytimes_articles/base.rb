@@ -52,6 +52,23 @@ module Nytimes
 				return nil unless value =~ /^\d{8}$/
 				Date.strptime(value, "%Y%m%d")
 			end
+			
+			def self.boolean_field(value)
+				case value
+				when nil
+					false
+				when TrueClass
+					true
+				when FalseClass
+					false
+				when 'Y'
+					true
+				when 'N'
+					false
+				else
+					false
+				end
+			end
 
 			def self.invoke(params={})
 				begin

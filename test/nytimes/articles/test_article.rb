@@ -488,9 +488,21 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				assert_equal false, article.free?
 			end
 			
+			should "be true if returned as Y from the API" do
+				article = Article.init_from_api('fee' => 'Y')
+				assert_equal true, article.fee?
+				assert_equal false, article.free?
+			end
+			
 			should "default to false if not specified in the hash" do
 				assert_equal false, @article.fee?
 				assert_equal true, @article.free?
+			end
+			
+			should "default to false if returned as N from the API" do
+				article = Article.init_from_api('fee' => 'N')
+				assert_equal false, article.fee?
+				assert_equal true, article.free?
 			end
 		end
 		

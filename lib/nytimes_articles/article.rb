@@ -57,7 +57,7 @@ module Nytimes
 				:author => text_field(params['author']),
 				:body => text_field(params['body']),
 				:byline => text_field(params['byline']),
-				:fee => params['fee'] || false,
+				:fee => boolean_field(params['fee']),
 				:lead_paragraph => text_field(params['lead_paragraph']),
 				:nytd_title => text_field(params['nytd_title']),
 				:nytd_lead_paragraph => text_field(params['nytd_lead_paragraph']),
