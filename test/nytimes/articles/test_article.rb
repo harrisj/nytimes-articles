@@ -112,9 +112,10 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 					assert_raise(ArgumentError) { Article.search :since => 23 }
 				end
 				
-				should "add a end_date of today if no :before or :end_date argument is provided" do
-					Article.expects(:invoke).with(has_entry('end_date', Time.now.strftime("%Y%m%d")))
-					Article.search :since => Time.now
+				# This is to fix an error where the begin and end date are the same
+				should "add a end_date of tomorrow if no :before or :end_date argument is provided" do
+					Article.expects(:invoke).with(has_entry('end_date', (Date.today + 1).strftime("%Y%m%d")))
+					Article.search :since => Date.today
 				end
 				
 				should "not automatically add a end_date is there is a :before argument" do

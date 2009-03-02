@@ -252,7 +252,13 @@ module Nytimes
 
 			def self.add_facets_param(out_params, in_params)
 				if in_params[:facets]
-					out_params['facets'] = in_params[:facets].to_a.map {|f| Facet.symbol_name(f)}.join(',')
+					unless in_params[:facets].is_a? Array
+						facet_array = [in_params[:facets]]
+					else
+						facet_array = in_params[:facets]
+					end
+					
+					out_params['facets'] = facet_array.map {|f| Facet.symbol_name(f)}.join(',')
 				end
 			end
 
@@ -425,7 +431,7 @@ module Nytimes
 				end
 				
 				if in_params[:since] && out_params['end_date'].nil?
-					out_params['end_date'] = date_argument(:end_date, Time.now)
+					out_params['end_date'] = date_argument(:end_date, Date.today + 1)
 				end
 			end
 
