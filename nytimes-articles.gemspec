@@ -2,14 +2,14 @@
 
 Gem::Specification.new do |s|
   s.name = %q{nytimes-articles}
-  s.version = "0.2.1"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jacob Harris"]
-  s.date = %q{2009-03-01}
+  s.date = %q{2009-03-03}
   s.description = %q{A gem for accessing the New York Times Article Search API}
   s.email = %q{jharris@nytimes.com}
-  s.files = ["VERSION.yml", "lib/nytimes_articles", "lib/nytimes_articles/article.rb", "lib/nytimes_articles/base.rb", "lib/nytimes_articles/exceptions.rb", "lib/nytimes_articles/facet.rb", "lib/nytimes_articles/result_set.rb", "lib/nytimes_articles/thumbnail.rb", 'lib/nytimes_articles/query.rb', "lib/nytimes_articles.rb", "test/nytimes", "test/nytimes/articles", "test/nytimes/articles/test_article.rb", "test/nytimes/articles/test_base.rb", "test/nytimes/articles/test_facet.rb", "test/nytimes/articles/test_result_set.rb", "test/nytimes/articles/test_thumbnail.rb", 'test/nytimes/articles/test_query.rb', "test/test_helper.rb"]
+  s.files = ["VERSION.yml", "lib/nytimes_articles", "lib/nytimes_articles/article.rb", "lib/nytimes_articles/base.rb", "lib/nytimes_articles/exceptions.rb", "lib/nytimes_articles/facet.rb", "lib/nytimes_articles/query.rb", "lib/nytimes_articles/result_set.rb", "lib/nytimes_articles/thumbnail.rb", "lib/nytimes_articles.rb", "test/nytimes", "test/nytimes/articles", "test/nytimes/articles/test_article.rb", "test/nytimes/articles/test_base.rb", "test/nytimes/articles/test_facet.rb", "test/nytimes/articles/test_query.rb", "test/nytimes/articles/test_result_set.rb", "test/nytimes/articles/test_thumbnail.rb", "test/test_helper.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/harrisj/nytimes-articles}
   s.rdoc_options = ["--inline-source", "--charset=UTF-8"]
