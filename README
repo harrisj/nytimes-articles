@@ -2,6 +2,11 @@
 
 A simple GEM for interacting with the New York Times' Article Search API (http://developer.nytimes.com/docs/article_search_api)
 
+== CREDITS
+
+* Jacob Harris (http://open.blogs.nytimes.com/)
+* Taylor Barstow (http://www.nytexplorer.com/)
+
 == USAGE
 
 	require 'rubygems'
