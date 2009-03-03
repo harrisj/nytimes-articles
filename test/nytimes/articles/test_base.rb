@@ -88,6 +88,17 @@ class TestNytimes::TestArticles::TestBase < Test::Unit::TestCase
 				end
 			end
 		end
+		
+		context "when passing Integer for offset" do
+		  # note Article.search requries integer for offset
+		  setup do
+				FakeWeb.register_uri(api_url_for('offset' => '1'), :status => ['200', 'OK'], :string => '{}')
+			end
+		  
+		  should "not raise NoMethodError" do
+		    assert_nothing_raised(NoMethodError) { Base.invoke('offset' => 1) }
+	    end
+	  end
 	end
 	
 	context "Base#text_field" do

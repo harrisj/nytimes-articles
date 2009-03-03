@@ -41,7 +41,7 @@ module Nytimes
 			def self.build_request_url(params)
 				URI::HTTP.build :host => API_SERVER,
 				:path => API_BASE,
-				:query => params.map {|k,v| "#{URI.escape(k)}=#{URI.escape(v)}"}.join('&')
+				:query => params.map {|k,v| "#{URI.escape(k)}=#{URI.escape(v.to_s)}"}.join('&')
 			end
 			
 			def self.text_field(value)
