@@ -12,6 +12,7 @@ module Nytimes
 
 			@@api_key = nil
 			@@debug = false
+			@@decode_html_entities = true
 
 			##
 			# Set the API key used for operations. This needs to be called before any requests against the API. To obtain an API key, go to http://developer.nytimes.com/
@@ -22,6 +23,12 @@ module Nytimes
 			def self.debug=(flag)
 				@@debug = flag
 			end
+			
+			##
+			# Set whether or not to decode HTML entities when returning text fields.
+			def self.decode_html_entities=(flag)
+			  @@decode_html_entities = flag
+		  end
 
 			##
 			# Returns the current value of the API Key
@@ -39,8 +46,7 @@ module Nytimes
 			
 			def self.text_field(value)
 				return nil if value.nil?
-				coder = HTMLEntities.new
-				coder.decode(value)
+				@@decode_html_entities ? HTMLEntities.new.decode(value) : value
 			end
 			
 			def self.integer_field(value)

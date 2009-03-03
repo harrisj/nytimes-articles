@@ -89,4 +89,21 @@ class TestNytimes::TestArticles::TestBase < Test::Unit::TestCase
 			end
 		end
 	end
+	
+	context "Base#text_field" do
+    context "when decode_html_entities == true" do
+      should "decode HTML entities in text fields" do
+        assert_equal "foó", Base.text_field("fo&oacute;")
+      end
+    end
+    
+    context "when decode_html_entities == false" do
+      setup { Base.decode_html_entities = false }
+      teardown { Base.decode_html_entities = true }
+      
+      should "not decode HTML entities in text fields" do
+        assert_equal "fo&oacute;", Base.text_field("fo&oacute;")
+      end
+    end
+  end
 end
