@@ -30,6 +30,10 @@ module Nytimes
 			attr_reader :classifiers, :descriptions, :geo, :material_types, :organizations, :persons, :nytd_bylines, :nytd_descriptions, :nytd_geo, :nytd_organizations, :nytd_persons, :nytd_sections, :nytd_works_mentioned, :works_mentioned
 			alias :people :persons
 			alias :nytd_people :nytd_persons
+			alias :places :geo
+			alias :nytd_places :nytd_geo
+			alias :subjects :descriptions
+			alias :nytd_subjects :nytd_descriptions
 			
 			##
 			# Create a new Article from hash arguments. You really don't need to call this as Article instances are automatically returned from the API
@@ -226,9 +230,8 @@ module Nytimes
 			end
 
 			def self.facet_params(params, facet_name)
-				return nil if params[facet_name].nil?
-
-				params[facet_name].map {|f| Facet.new(facet_name, f, nil) }
+				#return nil if params[facet_name].nil?
+				params[facet_name] # .map {|f| Facet.new(facet_name, f, nil) }
 			end
 
 			def self.text_argument(field, argument)
