@@ -35,7 +35,7 @@ module Nytimes
 				@offset = params[:offset]
 				@total_results = params[:total_results]
 				@results = params[:results]
-				@facets = params[:facets]
+				@facets = FacetHash.init_from_api(params[:facets])
 			end
 			
 			##
