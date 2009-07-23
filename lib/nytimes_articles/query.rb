@@ -8,7 +8,7 @@ module Nytimes
 	  #
 	  class Query
       FIELDS = [:only_facets, :except_facets, :begin_date, :end_date, :since, 
-	              :before, :fee, :has_thumbnail, :facets, :fields, :query, :offset] + Article::TEXT_FIELDS.map(&:to_sym)
+	              :before, :fee, :has_thumbnail, :facets, :fields, :query, :offset] + Article::TEXT_FIELDS.map{|f| f.to_sym}
       FIELDS.each {|f| attr_accessor f}
       
       # Produce a hash which uniquely identifies this query
