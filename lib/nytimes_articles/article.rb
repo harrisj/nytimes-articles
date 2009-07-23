@@ -187,13 +187,14 @@ module Nytimes
 		  #
 		  # == ARTICLE FIELDS
 		  #
-		  # The <tt>:fields</tt> parameter is used to indicate what fields are returned with each article from the search results. If not specified, only
-		  # the following fields are returned for each article: body, byline, date, title, and url. To return specific fields, any of the search fields
+		  # The <tt>:fields</tt> parameter is used to indicate what fields are returned with each article from the search results. If not specified, all
+		  # fields are returned. To return specific fields, any of the search fields
 		  # from above can be explicitly specified in a comma-delimited list, as well as the additional display-only (not searchable) fields below (these
 		  # are strings or symbols):
 		  # 
 		  # * <tt>:all</tt> - return all fields for the article
 		  # * <tt>:none</tt> - display only the facet breakdown and no article results
+		  # * <tt>:basic</tt> - return only the body, byline, date, title, and url
 		  # * <tt>:multimedia</tt> - return any related multimedia links for the article
 		  # * <tt>:thumbnail</tt> - return information for a related thumbnail image (if the article has one)
 		  # * <tt>:word_count</tt> - the word_count of the article.
@@ -276,10 +277,10 @@ module Nytimes
 
 			def self.add_fields_param(out_params, in_params)
 				case in_params[:fields]
-				when nil
-					# do nothing
-				when :all
+				when nil, :all
 					out_params['fields'] = ALL_FIELDS.join(',')
+				when :basic
+					# do nothing, the API will return basic URLs
 				when :none
 					out_params['fields'] = ' '
 					unless out_params['facets']

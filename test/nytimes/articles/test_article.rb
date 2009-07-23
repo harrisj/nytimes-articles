@@ -249,10 +249,24 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 		end
 
 		context ":fields" do
+			context "when not specified at all" do
+				should "pass all fields in a comma-delimited list" do
+					Article.expects(:invoke).with(has_entry('fields', Article::ALL_FIELDS.join(',')))
+					Article.search "FOO BAR", :fields => :all
+				end
+			end
+			
 			context "for the :all argument" do
 				should "pass all fields in a comma-delimited list" do
 					Article.expects(:invoke).with(has_entry('fields', Article::ALL_FIELDS.join(',')))
 					Article.search "FOO BAR", :fields => :all
+				end
+			end
+			
+			context "for the :basic argument" do
+				should "not send a fields argument to the api" do
+					Article.expects(:invoke).with(Not(has_key('fields')))
+					Article.search "FOO BAR", :fields => :basic
 				end
 			end
 			

@@ -1,0 +1,9 @@
+HISTORY
+
+= 0.4.0
+  - Changed facet format returned from search
+  - Changed default fields returned to all
+  - Added basic fields type
+
+= 0.3.0
+  - Whoops, I never had a history file!
