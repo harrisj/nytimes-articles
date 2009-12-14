@@ -81,6 +81,24 @@ class TestNytimes::TestArticles::TestFacet < Test::Unit::TestCase
 			end
 		end
 		
+		[:dbpedia, :dbpedia_res, :dbpedia_resource].each do |sym|
+		  should "return Facet::DBPEDIA_RESOURCE for #{sym}" do
+				assert_equal Facet::DBPEDIA_RESOURCE, Facet.symbol_name(sym)
+			end
+		end
+		
+		[:dbpedia_url, :dbpedia_resource_url].each do |sym|
+		  should "return Facet::DBPEDIA_URL for #{sym}" do
+				assert_equal Facet::DBPEDIA_URL, Facet.symbol_name(sym)
+			end
+		end
+		
+		[:term, :terms, :facet_terms, :facet_term].each do |sym|
+		  should "return Facet::FACET_TERM for #{sym}" do
+		    assert_equal Facet::FACET_TERM, Facet.symbol_name(sym)
+		  end
+		end
+		
 		should "look for a matching constant and use that value" do
 			assert_equal Facet::SOURCE, Facet.symbol_name(:source)
 		end

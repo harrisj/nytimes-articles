@@ -12,6 +12,7 @@ begin
 		s.requirements << 'Unicode'
 		s.requirements << 'The htmlentities gem'
 		s.add_dependency('htmlentities')
+		s.add_development_dependency('fakeweb')
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"

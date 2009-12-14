@@ -10,7 +10,7 @@ module Nytimes
 			RAW_FIELDS = %w(url)
 			TEXT_FIELDS = %w(abstract author body byline lead_paragraph nytd_lead_paragraph nytd_title title)
 			NUMERIC_FIELDS = %w(word_count)
-			BOOLEAN_FIELDS = %w(fee small_image)
+			BOOLEAN_FIELDS = %w(fee small_image comments)
 			IMAGE_FIELDS = %w(small_image small_image_url small_image_height small_image_width)
 			MULTIMEDIA_FIELDS = %w(multimedia related_multimedia)
 
@@ -52,6 +52,10 @@ module Nytimes
 			def free?
 				not(fee?)
 			end
+			
+			##
+			# An alias for comments
+			alias :has_comments? comments
 
 			##
 			# Creates a new Article from the a hash returned from the API. This is called on search results. You have no reason to call it.
@@ -62,6 +66,7 @@ module Nytimes
 				:body => text_field(params['body']),
 				:byline => text_field(params['byline']),
 				:fee => boolean_field(params['fee']),
+				:comments => boolean_field(params['comments']),
 				:lead_paragraph => text_field(params['lead_paragraph']),
 				:nytd_title => text_field(params['nytd_title']),
 				:nytd_lead_paragraph => text_field(params['nytd_lead_paragraph']),
@@ -87,6 +92,8 @@ module Nytimes
 				# FACETS THAT RETURN ARRAYS
 				:classifiers => facet_params(params, Facet::CLASSIFIERS),
 				:descriptions => facet_params(params, Facet::DESCRIPTION),
+				:dbpedia_resources => facet_params(params, Facet::DBPEDIA_RESOURCE),
+				:dbpedia_urls => facet_params(params, Facet::DBPEDIA_URL),
 				:geo => facet_params(params, Facet::GEO),
 				:material_types => facet_params(params, Facet::MATERIAL_TYPE),
 				:organizations => facet_params(params, Facet::ORGANIZATION),
@@ -143,8 +150,11 @@ module Nytimes
 			# * <tt>Facet::COLUMN</tt> - A Times column title (if applicable), such as _Weddings_ or _Ideas & Trends_
 			# * <tt>Facet::DATE</tt> - The publication date in YYYYMMDD format
 			# * <tt>Facet::DAY_OF_WEEK</tt> - The day of the week (e.g., Monday, Tuesday) the article was published (compare <tt>PUB_DAY</tt>, which is the numeric date rather than the day of the week) 
+			# * <tt>Facet::DBPEDIA_RESOURCE</tt> - DBpedia person names mapped to Times per_facet terms. This field is case sensitive: values must be Mixed Case.
+			# * <tt>Facet::DBPEDIA_URL</tt> - URLs to DBpedia person names that have been mapped to Times per_facet terms. This field is case sensitive: values must be Mixed Case.
 			# * <tt>Facet::DESCRIPTION</tt> - Descriptive subject terms assigned by Times indexers (must be in UPPERCASE)
 			# * <tt>Facet::DESK</tt> - The Times desk that produced the story (e.g., _Business/Financial Desk_)
+			# * <tt>Facet::FACET_TERM</tt> - Combines des_facet, geo_facet, org_facet and per_facet. Search facet_terms to find your query in any of those facets (essentially a combined OR search).
 			# * <tt>Facet::GEO</tt> - Standardized names of geographic locations, assigned by Times indexers (must be in UPPERCASE)
 			# * <tt>Facet::MATERIAL_TYPE</tt> - The general article type, such as Biography, Editorial or Review
 			# * <tt>Facet::ORGANIZATION</tt> - Standardized names of people, assigned by Times indexers (must be UPPERCASE)
@@ -179,6 +189,7 @@ module Nytimes
 			# * <tt>:fee</tt> - if set to true, only returns articles that must be purchased. If false, returns only free articles. If not specified, returns all articles
 			# * <tt>:has_thumbnail</tt> - returns only articles that have thumbnail images associated. Note that to see the thumbnails, you must specify either <tt>:thumbnail</tt> or <tt>:all</tt> in the <tt>:fields</tt> argument).
 			# * <tt>:has_multimedia</tt> - to be implemented
+			# * <tt>:comments</tt> - set to true to return articles that have comments
 			#
 			# == FACET SUMMARIES
 		  # 
@@ -380,6 +391,10 @@ module Nytimes
 				
 				unless in_params[:fee].nil?
 					bool_params << "#{'-' unless in_params[:fee]}fee:Y"
+				end
+				
+				unless in_params[:comments].nil?
+					bool_params << "#{'-' unless in_params[:comments]}comments:Y"
 				end
 				
 				unless in_params[:has_multimedia].nil?

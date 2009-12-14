@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Feb 17 07:15:55 -0500 2009</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>nytimes-articles</h1>
+<p>
+A simple GEM for interacting with the New York Times&#8217; Article Search
+API (<a
+href="http://developer.nytimes.com/docs/article_search_api">developer.nytimes.com/docs/article_search_api</a>)
+</p>
+<h2>USAGE</h2>
+<pre>
+        require 'rubygems'
+        require 'nytimes-articles'
+
+        include Nytimes::Articles
+        Base.api_key = 'YOUR API KEY'
+        Article.search 'ice cream'
+        Article.search :title =&gt; '&quot;ice cream&quot;', :since =&gt; 3.weeks.ago, :fields =&gt; :all
+        Article.search :author =&gt; 'Sewell Chan', :facets =&gt; [Facet::GEO, Facet::PERSON], :fields =&gt; :all
+</pre>
+<p>
+See the RDOC for Article#search for better instructions on usage.
+</p>
+<h2>TODO</h2>
+<p>
+The following functionality is still to be implemented:
+</p>
+<ul>
+<li>Parsing multimedia and related_multimedia fields
+
+</li>
+<li>Parsing smallimage fields
+
+</li>
+<li>Coercion of some facet results into more suitable Ruby types (mostly Dates
+/ Integer fields)
+
+</li>
+<li>Next / previous result set pagination (with memoization?)
+
+</li>
+</ul>
+<h2>COPYRIGHT</h2>
+<p>
+Copyright (c) 2008 Jacob Harris. See LICENSE for details.
+</p>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

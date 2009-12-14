@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Nytimes::Articles::Article</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Nytimes::Articles::Article</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/nytimes_articles/article_rb.html">
+                lib/nytimes_articles/article.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Base.html">
+                Base
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <a href="Article.html">Article</a> class represents a single article
+returned from the New York Times <a href="Article.html">Article</a> Search
+API. Note that an article can have many attributes but these are not
+necessarily populated unless you explicitly request them in the reply from
+the server via the <tt>:fields</tt> parameter to <a
+href="Article.html#M000006">search</a> (or use <tt>:fields =&gt;
+:all</tt>).
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000004">free?</a>&nbsp;&nbsp;
+      <a href="#M000005">init_from_api</a>&nbsp;&nbsp;
+      <a href="#M000003">new</a>&nbsp;&nbsp;
+      <a href="#M000006">search</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RAW_FIELDS</td>
+          <td>=</td>
+          <td class="context-item-value">%w(url)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TEXT_FIELDS</td>
+          <td>=</td>
+          <td class="context-item-value">%w(abstract author body byline lead_paragraph nytd_lead_paragraph nytd_title title)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NUMERIC_FIELDS</td>
+          <td>=</td>
+          <td class="context-item-value">%w(word_count)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BOOLEAN_FIELDS</td>
+          <td>=</td>
+          <td class="context-item-value">%w(fee small_image)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">IMAGE_FIELDS</td>
+          <td>=</td>
+          <td class="context-item-value">%w(small_image small_image_url small_image_height small_image_width)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MULTIMEDIA_FIELDS</td>
+          <td>=</td>
+          <td class="context-item-value">%w(multimedia related_multimedia)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ALL_FIELDS</td>
+          <td>=</td>
+          <td class="context-item-value">TEXT_FIELDS + RAW_FIELDS + NUMERIC_FIELDS + BOOLEAN_FIELDS + MULTIMEDIA_FIELDS + Facet::ALL_FACETS + IMAGE_FIELDS</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">persons</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">people</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_persons</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">nytd_people</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">fee</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">fee?</td>
+        </tr>
+      <tr class="top-aligned-row context-row">
+        <td>&nbsp;</td>
+        <td colspan="2" class="context-item-desc">
+Is this article available for a fee?
+
+</td>
+      </tr>
+                        </table>
+      </div>
+    </div>
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">classifiers</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">column</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">date</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">day_of_week</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">descriptions</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">desk</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">geo</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">material_types</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_bylines</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_descriptions</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_geo</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_organizations</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_persons</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_sections</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">nytd_works_mentioned</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">organizations</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">page</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">persons</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">pub_day</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">pub_month</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">pub_year</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">section_page</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">source</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Scalar facets
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">thumbnail</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+special additional objects
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">works_mentioned</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Facets that return multiple values
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="#M000005" class="method-signature">
+          <span class="method-name">init_from_api</span><span class="method-args">(params)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="Article.html#M000003">new</a> <a
+href="Article.html">Article</a> from the a hash returned from the API. This
+is called on <a href="Article.html#M000006">search</a> results. You have no
+reason to call it.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000005-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/nytimes_articles/article.rb, line 52</span>
+52:                         <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">init_from_api</span>(<span class="ruby-identifier">params</span>)
+53:                                 <span class="ruby-identifier">article</span> = <span class="ruby-constant">Article</span>.<span class="ruby-identifier">new</span>(
+54:                                 <span class="ruby-identifier">:abstract</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'abstract'</span>]),
+55:                                 <span class="ruby-identifier">:author</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'author'</span>]),
+56:                                 <span class="ruby-identifier">:body</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'body'</span>]),
+57:                                 <span class="ruby-identifier">:byline</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'byline'</span>]),
+58:                                 <span class="ruby-identifier">:fee</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value str">'fee'</span>] <span class="ruby-operator">||</span> <span class="ruby-keyword kw">false</span>,
+59:                                 <span class="ruby-identifier">:lead_paragraph</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'lead_paragraph'</span>]),
+60:                                 <span class="ruby-identifier">:nytd_title</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'nytd_title'</span>]),
+61:                                 <span class="ruby-identifier">:nytd_lead_paragraph</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'nytd_lead_paragraph'</span>]),
+62:                                 <span class="ruby-identifier">:related_multimedia</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>, <span class="ruby-comment cmt"># FIXME</span>
+63:                                 <span class="ruby-identifier">:thumbnail</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Thumbnail</span>.<span class="ruby-identifier">init_from_api</span>(<span class="ruby-identifier">params</span>),
+64:                                 <span class="ruby-identifier">:title</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'title'</span>]),
+65:                                 <span class="ruby-identifier">:url</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value str">'url'</span>],
+66:                                 <span class="ruby-identifier">:word_count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">integer_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value str">'word_count'</span>]),
+67: 
+68:                                 <span class="ruby-comment cmt"># FACETS THAT RETURN SCALARS</span>
+69:                                 <span class="ruby-identifier">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">integer_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">PAGE</span>]),
+70:                                 <span class="ruby-identifier">:column</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">COLUMN</span>]),
+71:                                 <span class="ruby-identifier">:pub_month</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">integer_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">PUB_MONTH</span>]),
+72:                                 <span class="ruby-identifier">:pub_year</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">integer_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">PUB_YEAR</span>]),
+73:                                 <span class="ruby-identifier">:pub_day</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">integer_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">PUB_DAY</span>]),
+74:                                 <span class="ruby-identifier">:day_of_week</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">DAY_OF_WEEK</span>],
+75:                                 <span class="ruby-identifier">:desk</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">DESK</span>]),
+76:                                 <span class="ruby-identifier">:date</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">date_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">DATE</span>]),
+77:                                 <span class="ruby-identifier">:section_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">SECTION_PAGE</span>],
+78:                                 <span class="ruby-identifier">:source</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">text_field</span>(<span class="ruby-identifier">params</span>[<span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">SOURCE</span>]),
+79: 
+80:                                 <span class="ruby-comment cmt"># FIXME! MORE FACET PARAMS</span>
+81:                                 <span class="ruby-comment cmt"># FACETS THAT RETURN ARRAYS</span>
+82:                                 <span class="ruby-identifier">:classifiers</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">CLASSIFIERS</span>),
+83:                                 <span class="ruby-identifier">:descriptions</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">DESCRIPTION</span>),
+84:                                 <span class="ruby-identifier">:geo</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">GEO</span>),
+85:                                 <span class="ruby-identifier">:material_types</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">MATERIAL_TYPE</span>),
+86:                                 <span class="ruby-identifier">:organizations</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">ORGANIZATION</span>),
+87:                                 <span class="ruby-identifier">:persons</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">PERSON</span>),
+88:                                 <span class="ruby-identifier">:nytd_bylines</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">NYTD_BYLINE</span>),
+89:                                 <span class="ruby-identifier">:nytd_descriptions</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">NYTD_DESCRIPTION</span>),
+90:                                 <span class="ruby-identifier">:nytd_geo</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">NYTD_GEO</span>),
+91:                                 <span class="ruby-identifier">:nytd_organizations</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">NYTD_ORGANIZATION</span>),
+92:                                 <span class="ruby-identifier">:nytd_persons</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">NYTD_PERSON</span>),
+93:                                 <span class="ruby-identifier">:nytd_sections</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">NYTD_SECTION</span>),
+94:                                 <span class="ruby-identifier">:nytd_works_mentioned</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">NYTD_WORKS_MENTIONED</span>),
+95:                                 <span class="ruby-identifier">:works_mentioned</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">facet_params</span>(<span class="ruby-identifier">params</span>, <span class="ruby-constant">Facet</span><span class="ruby-operator">::</span><span class="ruby-constant">WORKS_MENTIONED</span>)
+96:                                 )
+97: 
+98:                                 <span class="ruby-identifier">article</span>
+99:                         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="#M000003" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(params={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Article.html#M000003">new</a> <a
+href="Article.html">Article</a> from hash arguments. You really don&#8216;t
+need to call this as <a href="Article.html">Article</a> instances are
+automatically returned from the API
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000003-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/nytimes_articles/article.rb, line 34</span>
+34:                         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">params</span>={})
+35:                                 <span class="ruby-identifier">params</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+36:                                         <span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-node">&quot;@#{k}&quot;</span>, <span class="ruby-identifier">v</span>)
+37:                                 <span class="ruby-keyword kw">end</span>
+38:                         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="#M000006" class="method-signature">
+          <span class="method-name">search</span><span class="method-args">(query, params={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Executes a <a href="Article.html#M000006">search</a> against the <a
+href="Article.html">Article</a> Search API and returns a <a
+href="ResultSet.html">ResultSet</a> of 10 articles. At its simplest form,
+can be invoked with just a string like so
+</p>
+<pre>
+  Article.search 'dog food'
+</pre>
+<p>
+which will do a text <a href="Article.html#M000006">search</a> against
+several text fields in the article and return the most basic fields for
+each article, but it takes a large number of potential parameters. All of
+these fields and then some can be returned as display fields in the
+articles retrieved from <a href="Article.html#M000006">search</a> (see the
+<tt>:fields</tt> argument below)
+</p>
+<h2>TEXT FIELDS</h2>
+<p>
+If passed a string as the first argument, the text will be used to <a
+href="Article.html#M000006">search</a> against the title, byline and body
+fields of articles. This text takes the following boolean syntax:
+</p>
+<ul>
+<li><tt>dog food</tt> - similar to doing a boolean =AND <a
+href="Article.html#M000006">search</a> on both terms
+
+</li>
+<li><tt>&quot;ice cream&quot;</tt> - matches the words as a phrase in the text
+
+</li>
+<li><tt>ice -cream</tt> - to <a href="Article.html#M000006">search</a> text
+that doesn&#8216;t contain a term, prefix with the minus sign.
+
+</li>
+</ul>
+<p>
+Should you wish to target text against specific text fields associated with
+the article, the following named parameters are supported:
+</p>
+<ul>
+<li><tt>:abstract</tt> - A summary of the article, written by Times indexers
+
+</li>
+<li><tt>:body</tt> - A portion of the beginning of the article. Note: Only a
+portion of the article body is included in responses. But when you <a
+href="Article.html#M000006">search</a> against the body field, you <a
+href="Article.html#M000006">search</a> the full text of the article.
+
+</li>
+<li><tt>:byline</tt> - The article byline, including the author&#8216;s name
+
+</li>
+<li><tt>:lead_paragraph</tt> - The first paragraph of the article (as it
+appeared in the printed newspaper)
+
+</li>
+<li><tt>:nytd_byline</tt> - The article byline, formatted for NYTimes.com
+
+</li>
+<li><tt>:nytd_lead_paragraph</tt> - The first paragraph of the article (as it
+appears on NYTimes.com)
+
+</li>
+<li><tt>:nytd_title</tt> - The article title on NYTimes.com (this field may or
+may not match the title field; headlines may be shortened and edited for
+the Web)
+
+</li>
+<li><tt>:text</tt> - The text field consists of title + byline + body (combined
+in an OR <a href="Article.html#M000006">search</a>) and is the default
+field for keyword searches.
+
+</li>
+<li><tt>:title</tt> - The article title (headline); corresponds to the headline
+that appeared in the printed newspaper
+
+</li>
+<li><tt>:url</tt> - The URL of the article on NYTimes.com
+
+</li>
+</ul>
+<h2>FACET SEARCHING</h2>
+<p>
+Beyond query searches, the NY Times API also allows you to <a
+href="Article.html#M000006">search</a> against controlled vocabulary
+metadata associated with the article. This is powerful, if you want precise
+matching against specific people, places, etc (eg, &quot;I want stories
+about Ford the former president, not Ford the automative company&quot;).
+The following <a href="Facet.html">Facet</a> constants are supported.
+</p>
+<ul>
+<li><tt>Facet::CLASSIFIERS</tt> - Taxonomic classifiers that reflect Times
+content categories, such as _Top/News/Sports_
+
+</li>
+<li><tt>Facet::COLUMN</tt> - A Times column title (if applicable), such as
+<em>Weddings</em> or _Ideas &amp; Trends_
+
+</li>
+<li><tt>Facet::DATE</tt> - The publication date in YYYYMMDD format
+
+</li>
+<li><tt>Facet::DAY_OF_WEEK</tt> - The day of the week (e.g., Monday, Tuesday)
+the article was published (compare <tt>PUB_DAY</tt>, which is the numeric
+date rather than the day of the week)
+
+</li>
+<li><tt>Facet::DESCRIPTION</tt> - Descriptive subject terms assigned by Times
+indexers (must be in UPPERCASE)
+
+</li>
+<li><tt>Facet::DESK</tt> - The Times desk that produced the story (e.g.,
+_Business/Financial Desk_)
+
+</li>
+<li><tt>Facet::GEO</tt> - Standardized names of geographic locations, assigned
+by Times indexers (must be in UPPERCASE)
+
+</li>
+<li><tt>Facet::MATERIAL_TYPE</tt> - The general article type, such as
+Biography, Editorial or Review
+
+</li>
+<li><tt>Facet::ORGANIZATION</tt> - Standardized names of people, assigned by
+Times indexers (must be UPPERCASE)
+
+</li>
+<li><tt>Facet::PAGE</tt> - The page the article appeared on (in the printed
+paper)
+
+</li>
+<li><tt>Facet::PERSON</tt> - Standardized names of people, assigned by Times
+indexers. When used in a request, values must be UPPERCASE.
+
+</li>
+<li><tt>Facet::PUB_DAY</tt> - The day (DD) segment of date, separated for use
+as facets
+
+</li>
+<li><tt>Facet::PUB_MONTH</tt> - The month (MM) segment of date, separated for
+use as facets
+
+</li>
+<li><tt>Facet::PUB_YEAR</tt> - The year (YYYY) segment of date, separated for
+use as facets
+
+</li>
+<li><tt>Facet::SECTION_PAGE</tt> - The full page number of the printed article
+(e.g., _D00002_)
+
+</li>
+<li><tt>Facet::SOURCE</tt> - The originating body (e.g., <em>AP</em>, _Dow
+Jones_, _The New York Times_)
+
+</li>
+<li><tt>Facet::WORKS_MENTIONED</tt> - Literary works mentioned in the article
+
+</li>
+<li><tt>Facet::NYTD_BYLINE</tt> - The article byline, formatted for NYTimes.com
+
+</li>
+<li><tt>Facet::NYTD_DESCRIPTION</tt> - Descriptive subject terms, assigned for
+use on NYTimes.com (to get standardized terms, use the TimesTags API). When
+used in a request, values must be Mixed Case
+
+</li>
+<li><tt>Facet::NYTD_GEO</tt> - Standardized names of geographic locations,
+assigned for use on NYTimes.com (to get standardized terms, use the
+TimesTags API). When used in a request, values must be Mixed Case
+
+</li>
+<li><tt>Facet::NYTD_ORGANIZATION</tt> - Standardized names of organizations,
+assigned for use on NYTimes.com (to get standardized terms, use the
+TimesTags API). When used in a request, values must be Mixed Case
+
+</li>
+<li><tt>Facet::NYTD_PERSON</tt> - Standardized names of people, assigned for
+use on NYTimes.com (to get standardized terms, use the TimesTags API). When
+used in a request, values must be Mixed Case.
+
+</li>
+<li><tt>Facet::NYTD_SECTION</tt> - The section the article appears in (on
+NYTimes.com)
+
+</li>
+<li><tt>Facet::NYTD_WORKS_MENTIONED</tt> - Literary works mentioned (titles
+formatted for use on NYTimes.com)
+
+</li>
+</ul>
+<p>
+The following two <a href="Article.html#M000006">search</a> fields are used
+for facet searching:
+</p>
+<ul>
+<li><tt>:search_facets</tt> - takes a single value or array of facets to <a
+href="Article.html#M000006">search</a>. Facets can either be specified as
+array pairs (like <tt>[Facet::GEOGRAPHIC, &#8216;CALIFORNIA&#8217;]</tt>)
+or facets returned from a previous <a
+href="Article.html#M000006">search</a> can be passed directly. A single
+string can be passed as well if you have hand-crafted string.
+
+</li>
+<li><tt>:exclude_facets</tt> - similar to <tt>:search_facets</tt> but is used
+to specify a list of facets to exclude.
+
+</li>
+</ul>
+<h2>OTHER SEARCH FIELDS</h2>
+<ul>
+<li><tt>:fee</tt> - to be implemented
+
+</li>
+<li><tt>:begin_date</tt>, <tt>:end_date</tt> - the parameters are used to
+specify a start and end date for <a href="Article.html#M000006">search</a>
+results. BOTH of these must be provided or the API will return an error.
+Accepts either a Time/Date argument or a string of the format YYYYMMDD. For
+convenience the following alternative methods are provided
+
+</li>
+<li><tt>:before</tt> - an alternative to :end_date. Automatically adds a
+:before_date of sometime in 1980 if no :since argument is also provided; to
+be implemented
+
+</li>
+<li><tt>:since</tt> - An alternative to :begin_date. Automatically adds an
+:end_date of Time.now if no :before argument is provided; to be
+implemented.
+
+</li>
+<li><tt>:has_thumbnail</tt> - to be implemented
+
+</li>
+<li><tt>:has_multimedia</tt> - to be implemented
+
+</li>
+</ul>
+<h2>FACET SUMMARIES</h2>
+<p>
+The <tt>:facets</tt> argument can be used to specify up to 5 facet fields
+to be returned alongside the <a href="Article.html#M000006">search</a> that
+provide overall counts of how much each facet term appears in the <a
+href="Article.html#M000006">search</a> results. FIXME provide list of
+available facets as well as description of :nytd parameter.
+</p>
+<h2>ARTICLE FIELDS</h2>
+<p>
+The <tt>:fields</tt> parameter is used to indicate what fields are returned
+with each article from the <a href="Article.html#M000006">search</a>
+results. If not specified, only the following fields are returned for each
+article: body, byline, date, title, and url. To return specific fields, any
+of the <a href="Article.html#M000006">search</a> fields from above can be
+explicitly specified in a comma-delimited list, as well as the additional
+display-only (not searchable) fields below (these are strings or symbols):
+</p>
+<ul>
+<li><tt>:all</tt> - return all fields for the article
+
+</li>
+<li><tt>:none</tt> - display only the facet breakdown and no article results
+
+</li>
+<li><tt>:multimedia</tt> - return any related multimedia links for the article
+
+</li>
+<li><tt>:thumbnail</tt> - return information for a related thumbnail image (if
+the article has one)
+
+</li>
+<li><tt>:word_count</tt> - the word_count of the article.
+
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000006-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/nytimes_articles/article.rb, line 190</span>
+190:                         <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">search</span>(<span class="ruby-identifier">query</span>, <span class="ruby-identifier">params</span>={})
+191:                                 <span class="ruby-identifier">params</span> = <span class="ruby-identifier">params</span>.<span class="ruby-identifier">dup</span>
+192: 
+193:                                 <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">query</span>
+194:                                 <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+195:                                         <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:query</span>] = <span class="ruby-identifier">query</span>
+196:                                 <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Hash</span>
+197:                                         <span class="ruby-identifier">params</span>.<span class="ruby-identifier">merge!</span> <span class="ruby-identifier">query</span>
+198:                                 <span class="ruby-keyword kw">end</span>
+199: 
+200:                                 <span class="ruby-identifier">api_params</span> = {}
+201: 
+202:                                 <span class="ruby-identifier">add_query_params</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+203:                                 <span class="ruby-identifier">add_search_facets_param</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+204:                                 <span class="ruby-identifier">add_boolean_params</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+205:                                 <span class="ruby-identifier">add_facets_param</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+206:                                 <span class="ruby-identifier">add_fields_param</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+207:                                 <span class="ruby-identifier">add_rank_params</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+208:                                 <span class="ruby-identifier">add_date_params</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+209:                                 <span class="ruby-identifier">add_offset_params</span>(<span class="ruby-identifier">api_params</span>, <span class="ruby-identifier">params</span>)
+210: 
+211:                                 <span class="ruby-identifier">reply</span> = <span class="ruby-identifier">invoke</span>(<span class="ruby-identifier">api_params</span>)
+212:                                 <span class="ruby-identifier">parse_reply</span>(<span class="ruby-identifier">reply</span>)
+213:                         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="#M000004" class="method-signature">
+          <span class="method-name">free?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is this article available for <a href="Article.html#M000004">free?</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000004-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/nytimes_articles/article.rb, line 46</span>
+46:                         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">free?</span>
+47:                                 <span class="ruby-keyword kw">not</span>(<span class="ruby-identifier">fee?</span>)
+48:                         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

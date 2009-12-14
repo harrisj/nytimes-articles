@@ -25,8 +25,11 @@ module Nytimes
 			COLUMN = 'column_facet'
 			DATE = 'date'
 			DAY_OF_WEEK = 'day_of_week_facet'
+			DBPEDIA_RESOURCE = 'dbpedia_resource'
+			DBPEDIA_URL = 'dbpedia_resource_url'
 			DESCRIPTION = 'des_facet'
 			DESK = 'desk_facet'
+			FACET_TERM = 'facet_terms'
 			GEO = 'geo_facet'
 			MATERIAL_TYPE = 'material_type_facet'
 			ORGANIZATION = 'org_facet'
@@ -51,9 +54,9 @@ module Nytimes
 			# The default 5 facets to return
 		  DEFAULT_RETURN_FACETS = [DESCRIPTION, GEO, ORGANIZATION, PERSON, DESK]
 		
-			ALL_FACETS = [CLASSIFIERS, COLUMN, DATE, DAY_OF_WEEK, DESCRIPTION, DESK, GEO, MATERIAL_TYPE, ORGANIZATION, PAGE, PERSON, PUB_DAY,
-														PUB_MONTH, PUB_YEAR, SECTION_PAGE, SOURCE, WORKS_MENTIONED, NYTD_BYLINE, NYTD_DESCRIPTION, NYTD_GEO,
-														NYTD_ORGANIZATION, NYTD_PERSON, NYTD_SECTION, NYTD_WORKS_MENTIONED]
+			ALL_FACETS = [CLASSIFIERS, COLUMN, DATE, DAY_OF_WEEK, DESCRIPTION, DBPEDIA_RESOURCE, DBPEDIA_URL, DESK, GEO, MATERIAL_TYPE, ORGANIZATION, PAGE, PERSON, PUB_DAY,
+										PUB_MONTH, PUB_YEAR, SECTION_PAGE, SOURCE, WORKS_MENTIONED, NYTD_BYLINE, NYTD_DESCRIPTION, NYTD_GEO,
+										NYTD_ORGANIZATION, NYTD_PERSON, NYTD_SECTION, NYTD_WORKS_MENTIONED]
 			
 			##
 			# Initializes the facet. There is seldom a reason for you to call this.
@@ -90,6 +93,12 @@ module Nytimes
 					NYTD_ORGANIZATION
 				when :nytd_people
 					NYTD_PERSON
+				when :dbpedia, :dbpedia_res
+				  DBPEDIA_RESOURCE
+				when :dbpedia_url, :dbpedia_resource_url
+				  DBPEDIA_URL
+				when :term, :terms, :facet_terms, :facet_term
+				  FACET_TERM
 				else
 					name = facet.to_s.upcase
 					

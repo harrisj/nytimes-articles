@@ -247,6 +247,18 @@ class TestNytimes::TestArticles::TestArticle < Test::Unit::TestCase
 				Article.search "ice cream", :fee => false
 			end
 		end
+		
+		context ":comments" do
+			should "send through as comments:Y if set to true" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream comments:Y"))
+				Article.search "ice cream", :comments => true
+			end
+			
+			should "send through as -comments:Y if set to false" do
+				Article.expects(:invoke).with(has_entry("query", "ice cream -comments:Y"))
+				Article.search "ice cream", :comments => false
+			end
+		end
 
 		context ":fields" do
 			context "when not specified at all" do

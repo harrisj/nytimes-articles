@@ -1,5 +1,8 @@
 HISTORY
 
+= 0.4.1
+  - Added support for comments, dbpedia_resource, dbpedia_resource_url, and terms_facet fields
+
 = 0.4.0
   - Changed facet format returned from search
   - Changed default fields returned to all

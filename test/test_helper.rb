@@ -2,7 +2,7 @@ require 'rubygems'
 require 'test/unit'
 require 'shoulda'
 require 'mocha'
-gem 'chrisk-fakeweb'
+gem 'fakeweb'
 require 'fake_web'
 
 FakeWeb.allow_net_connect = false
